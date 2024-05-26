@@ -7,6 +7,7 @@
 //
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
+// @grant           none
 // @version         1.1
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.js
 // @run-at			document-start
@@ -336,7 +337,7 @@ function insertCanvasElements() {
 	scrollDownButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
 	document.body.appendChild(scrollDownButton);
 	var throwButton = document.createElement('button');
-	throwButton.id = "hideInventory"
+	throwButton.id = "hideButton"
 	throwButton.textContent = "Q";
 	throwButton.style.cssText = "right:0vh;bottom:10vh;"
 	throwButton.addEventListener("touchstart", function(e){
