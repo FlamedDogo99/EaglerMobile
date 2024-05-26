@@ -1,14 +1,13 @@
 // ==UserScript==
-// @name          	Eagler Mobile
-// @description     Allows eaglercraft to run on mobile, adds touch controls, and fixes a few mobile-related crashes
+// @name			Eagler Mobile
+// @description		Allows eaglercraft to run on mobile, adds touch controls, and fixes a few mobile-related crashes
 // @author			FlamedDogo99
-// @namespace       http://github.com/FlamedDogo99
+// @namespace		http://github.com/FlamedDogo99
 // @downloadURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.js
-//
-// @license         Apache License 2.0 - http://www.apache.org/licenses/
+// @license			Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
-// @grant           none
-// @version         1.1
+// @grant			none
+// @version			1.1
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.js
 // @run-at			document-start
 // ==/UserScript==
