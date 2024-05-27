@@ -7,7 +7,7 @@
 // @license			Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
 // @grant			none
-// @version			1.1
+// @version			1.2
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.js
 // @run-at			document-start
 // ==/UserScript==
@@ -210,10 +210,7 @@ function insertCanvasElements() {
         }
         e.movementX = touch.pageX - previousX;
         e.movementY = touch.pageY - previousY;
-        var evt = new MouseEvent("mousemove", {
-            movementX: e.movementX,
-            movementY: e.movementY
-        });
+        var evt = window.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
         canvas.dispatchEvent(evt);
         previousX = touch.pageX;
         previousY = touch.pageY;
