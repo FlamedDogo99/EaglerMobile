@@ -219,10 +219,7 @@ function insertCanvasElements() {
         }
         e.movementX = touch.pageX - previousX;
         e.movementY = touch.pageY - previousY;
-        var evt = new MouseEvent("mousemove", {
-            movementX: e.movementX,
-            movementY: e.movementY
-        });
+        var evt = window.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
         canvas.dispatchEvent(evt);
         previousX = touch.pageX;
         previousY = touch.pageY;
