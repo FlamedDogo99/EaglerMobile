@@ -7,7 +7,7 @@
 // @license			Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
 // @grant			none
-// @version			1.2
+// @version			1.3
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at			document-start
 // ==/UserScript==
