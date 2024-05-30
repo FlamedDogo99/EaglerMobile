@@ -7,7 +7,7 @@
 // @license			Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
 // @grant			none
-// @version			1.4
+// @version			1.5
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at			document-start
 // ==/UserScript==
@@ -21,12 +21,12 @@ function isMobile() {
     return false;
   }
 }
-if(!isMobile()){alert("WARNING: This script doesn't play well with non-mobile browsers. Proceed at your own risk!")};
-// Hides inventory button
-window.inInventory = false;
+if(!isMobile()){
+	alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
+}
 // Used for changing touchmove events to mousemove events
-var previousX = null;
-var previousY = null;
+var previousTouchX = null;
+var previousTouchY = null;
 // Key and mouse events
 function keyEvent(name, state) {
     const keyName = name.toUpperCase().charCodeAt(0)
@@ -36,7 +36,7 @@ function keyEvent(name, state) {
       which: keyName
     }));
 }
-function shiftKey(state) {
+function shiftKeyEvent(state) {
     window.dispatchEvent(new KeyboardEvent(state, {
         keyCode: 16,
       which: 16
@@ -44,6 +44,17 @@ function shiftKey(state) {
 }
 function mouseEvent(number, state, canvas) {
   canvas.dispatchEvent(new PointerEvent(state, {"button": number}))
+}
+function wheelEvent(canvas, delta) {
+  canvas.dispatchEvent(new WheelEvent("wheel", {
+    "wheelDeltaY": delta
+  }));
+}
+function setButtonVisibility(pointerLocked) {
+	let inGameStyle = document.getElementById('inGameStyle');
+	let inMenuStyle = document.getElementById('inMenuStyle');
+	inGameStyle.disabled = pointerLocked;
+	inMenuStyle.disabled = !pointerLocked;	
 }
 // POINTERLOCK
 // When requestpointerlock is called, this dispatches an event, saves the requested element to window.fakelock, and unhides the touch controls
@@ -53,10 +64,7 @@ Element.prototype.requestPointerLock = function() {
   window.fakelock = this
   document.dispatchEvent(new Event('pointerlockchange'));
   console.log("requested pointerlock")
-  var hideButtonStyleDOM = document.getElementById('hideButtonStyle');
-  var hideInventoryStyleDOM = document.getElementById('hideInventoryStyle');
-  hideButtonStyleDOM.disabled = true;
-  hideInventoryStyleDOM.disabled = true;
+  setButtonVisibility(true);
   return true
 }
 
@@ -69,12 +77,9 @@ Object.defineProperty(document, "pointerLockElement", {
 });
 // When exitPointerLock is called, this dispatches an event, clears the
 document.exitPointerLock = function() {
-    window.fakelock = null
+	window.fakelock = null
     document.dispatchEvent(new Event('pointerlockchange'));
-    var hideButtonStyleDOM = document.getElementById('hideButtonStyle');
-  var hideInventoryStyleDOM = document.getElementById('hideInventoryStyle');
-  hideButtonStyleDOM.disabled = false;
-  hideInventoryStyleDOM.disabled = window.inInventory;
+	setButtonVisibility(false);
     return true
 }
 
@@ -123,7 +128,7 @@ document.createElement = function(type) {
 // CSS for touch screen buttons, along with fixing iOS's issues with 100vh ignoring the naviagtion bar, and actually disabling zoom because safari ignores user-scalable=no :(
 let customStyle = document.createElement("style");
 customStyle.textContent = `
-    button {
+    .mobileControl {
         position: absolute; 
         width: 9.5vh;
         height: 9.5vh;
@@ -143,7 +148,7 @@ customStyle.textContent = `
         box-shadow: none;
         border: none;
     }
-    button:active {
+    .mobileControl:active {
         position: absolute; 
         width: 9.5vh;
         height: 9.5vh;
@@ -172,20 +177,22 @@ customStyle.textContent = `
 document.documentElement.appendChild(customStyle);
 
 // Lazy way to hide touch controls through CSS.
-let hideButtonStyle = document.createElement("style");
-hideButtonStyle.id = "hideButtonStyle";
-hideButtonStyle.textContent = `
-    #hideButton {
+let inGameStyle = document.createElement("style");
+inGameStyle.id = "inGameStyle";
+inGameStyle.textContent = `
+    .inGame {
         display: none;
     }`;
-document.documentElement.appendChild(hideButtonStyle);
-let hideInventoryStyle = document.createElement("style");
-hideInventoryStyle.id = "hideInventoryStyle";
-hideInventoryStyle.textContent = `
-    #hideInventory {
+document.documentElement.appendChild(inGameStyle);
+
+let inMenuStyle = document.createElement("style");
+inMenuStyle.id = "inMenuStyle";
+inMenuStyle.textContent = `
+    .inMenu {
         display: none;
     }`;
-document.documentElement.appendChild(hideInventoryStyle);  
+document.documentElement.appendChild(inMenuStyle);
+
 
 // The canvas is created by the client after it finishes unzipping and loading. When the canvas is created, this applies any necessary event listeners
 function waitForElm(selector) {
@@ -205,171 +212,141 @@ function waitForElm(selector) {
         });
     });
 }
+function createTouchButton(buttonClass, buttonDisplay, elementName) {
+	var touchButton = document.createElement(elementName ?? 'button');
+	touchButton.classList.add(buttonClass);
+	touchButton.classList.add(buttonDisplay);
+	touchButton.classList.add("mobileControl");
+	touchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
+	return touchButton;
+}
 
 waitForElm('canvas').then(() => {insertCanvasElements()});
 function insertCanvasElements() {    
-    // Translates touchmove events to mousemove events
+    // Translates touchmove events to mousemove events when inGame, and touchmove events to wheele events when inMenu
     var canvas = document.querySelector('canvas');
     canvas.addEventListener("touchmove", (e) => {
         const touch = e.targetTouches[0]; // We can get away with this because every other touch event will be on different elements
 
-        if (!previousX) {
-            previousX = touch.pageX;
-            previousY = touch.pageY;
+        if (!previousTouchX) {
+            previousTouchX = touch.pageX;
+            previousTouchY = touch.pageY;
         }
-        e.movementX = touch.pageX - previousX;
-        e.movementY = touch.pageY - previousY;
+        e.movementX = touch.pageX - previousTouchX;
+        e.movementY = touch.pageY - previousTouchY;
         var evt = window.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
         canvas.dispatchEvent(evt);
-        previousX = touch.pageX;
-        previousY = touch.pageY;
+        previousTouchX = touch.pageX;
+        previousTouchY = touch.pageY;
         event.preventDefault();
     }, false);
 
     canvas.addEventListener("touchend", (e) => {
-        previousX = null;
-        previousY = null; 
+        previousTouchX = null;
+        previousTouchY = null; 
     }, false)
+    //Updates button visibility on load
+    setButtonVisibility(window.fakelock != null);
     // Adds all of the touch screen controls
     // Theres probably a better way to do this but this works for now
-    var forwardButton = document.createElement('button');
-  forwardButton.id = "hideButton"
-  forwardButton.textContent = "▲";
-  forwardButton.style.cssText = "left:10vh;bottom:20vh;"
-  forwardButton.addEventListener("touchstart", function(e){keyEvent("w", "keydown")}, false);
-  forwardButton.addEventListener("touchend", function(e){keyEvent("w", "keyup")}, false);
-  forwardButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(forwardButton);
-  var rightButton = document.createElement('button');
-  rightButton.id = "hideButton"
-  rightButton.textContent = "▶";
-  rightButton.style.cssText = "left:20vh;bottom:10vh;"
-  rightButton.addEventListener("touchstart", function(e){keyEvent("d", "keydown")}, false);
-  rightButton.addEventListener("touchend", function(e){keyEvent("d", "keyup")}, false);
-  rightButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(rightButton);
-  var leftButton = document.createElement('button');
-  leftButton.id = "hideButton"
-  leftButton.textContent = "◀";
-  leftButton.style.cssText = "left: 0vh; bottom:10vh;"
-  leftButton.addEventListener("touchstart", function(e){keyEvent("a", "keydown")}, false);
-  leftButton.addEventListener("touchend", function(e){keyEvent("a", "keyup")}, false);
-  leftButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(leftButton);
-  var backButton = document.createElement('button');
-  backButton.id = "hideButton"
-  backButton.textContent = "▼";
-  backButton.style.cssText = "left:10vh;bottom:0vh;"
-  backButton.addEventListener("touchstart", function(e){keyEvent("s", "keydown")}, false);
-  backButton.addEventListener("touchend", function(e){keyEvent("s", "keyup")}, false);
-  backButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(backButton);
-  var jumpButton = document.createElement('button');
-  jumpButton.id = "hideButton"
-  jumpButton.textContent = "⇧";
-  jumpButton.style.cssText = "right:10vh;bottom:10vh;"
-  jumpButton.addEventListener("touchstart", function(e){keyEvent(" ", "keydown")}, false);
-  jumpButton.addEventListener("touchend", function(e){keyEvent(" ", "keyup")}, false);
-  jumpButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(jumpButton);
-  var crouchButton = document.createElement('button');
-  crouchButton.id = "hideButton"
-  crouchButton.textContent = "⇩";
-  crouchButton.style.cssText = "left:10vh;bottom:10vh;"
-  crouchButton.addEventListener("touchstart", function(e){shiftKey("keydown")}, false);
-  crouchButton.addEventListener("touchend", function(e){shiftKey("keyup")}, false);
-  crouchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(crouchButton);
-  var inventoryButton = document.createElement('button');
-  inventoryButton.id = "hideInventory"
-  inventoryButton.textContent = "🎒";
-  inventoryButton.style.cssText = "right:0vh;bottom:0vh;"
-  inventoryButton.addEventListener("touchstart", function(e){
-    window.inInventory = (window.fakelock != null)
-    keyEvent("e", "keydown");
-  }, false);
-  inventoryButton.addEventListener("touchend", function(e){keyEvent("e", "keyup")}, false);
-  inventoryButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(inventoryButton);
-  var chatButton = document.createElement('button');
-  chatButton.id = "hideButton"
-  chatButton.textContent = "💬";
-  chatButton.style.cssText = "right:0vh;top:0vh;"
-  chatButton.addEventListener("touchstart", function(e){keyEvent("¿", "keydown")}, false);
-  chatButton.addEventListener("touchend", function(e){keyEvent("¿", "keydown")}, false);
-  chatButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(chatButton);
-  var exitButton = document.createElement('button');
-  exitButton.id = "exitButton"
-  exitButton.textContent = "⮐";
-  exitButton.style.cssText = "left:0vh;top:0vh;"
-  exitButton.addEventListener("touchstart", function(e){keyEvent("À", "keydown")}, false);
-  exitButton.addEventListener("touchend", function(e){keyEvent("À", "keyup")}, false);
-  exitButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(exitButton);
-  var hiddenInput = document.createElement('input');
-  hiddenInput.id = "hiddenInput"
-  hiddenInput.style.cssText = "opacity:0;z-index:-99999";
-  document.body.appendChild(hiddenInput);
-  var keyboardButton = document.createElement('button');
-  keyboardButton.id = "keyboardButton"
-  keyboardButton.textContent = "⌨️";
-  keyboardButton.style.cssText = "left:10vh;top:0vh;"
-  keyboardButton.addEventListener("touchstart", function(e){e.preventDefault();hiddenInput.blur()}, false);
-  keyboardButton.addEventListener("touchend", function(e){hiddenInput.select()}, false);
-  keyboardButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(keyboardButton);
-  var placeButton = document.createElement('button');
-  placeButton.id = "hideButton"
-  placeButton.textContent = "⊹";
-  placeButton.style.cssText = "right:0vh;bottom:20vh;"
-  placeButton.addEventListener("touchstart", function(e){mouseEvent(2, "mousedown", canvas)}, false);
-  placeButton.addEventListener("touchend", function(e){mouseEvent(2, "mouseup", canvas)}, false);
-  placeButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(placeButton);
-  var breakButton = document.createElement('button');
-  breakButton.id = "hideButton"
-  breakButton.textContent = "🗡";
-  breakButton.style.cssText = "right:10vh;bottom:20vh;"
-  breakButton.addEventListener("touchstart", function(e){mouseEvent(0, "mousedown", canvas)}, false);
-  breakButton.addEventListener("touchend", function(e){mouseEvent(0, "mouseup", canvas)}, false);
-  breakButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(breakButton);
-  var selectButton = document.createElement('button');
-  selectButton.id = "hideButton"
-  selectButton.textContent = "⬚";
-  selectButton.style.cssText = "right:20vh;bottom:20vh;"
-  selectButton.addEventListener("touchstart", function(e){mouseEvent(1, "mousedown", canvas)}, false);
-  selectButton.addEventListener("touchend", function(e){mouseEvent(1, "mouseup", canvas)}, false);
-  selectButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(selectButton);
-  var scrollUpButton = document.createElement('button');
-  scrollUpButton.id = "hideButton"
-  scrollUpButton.textContent = "⇨";
-  scrollUpButton.style.cssText = "right:0vh;bottom:30vh;"
-  scrollUpButton.addEventListener("touchstart", function(e){
-    canvas.dispatchEvent(new WheelEvent("wheel", {"wheelDeltaY": -10}))
-  }, false);
-  scrollUpButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(scrollUpButton);
-  var scrollDownButton = document.createElement('button');
-  scrollDownButton.id = "hideButton"
-  scrollDownButton.textContent = "⇦";
-  scrollDownButton.style.cssText = "right:10vh;bottom:30vh;"
-  scrollDownButton.addEventListener("touchstart", function(e){
-    canvas.dispatchEvent(new WheelEvent("wheel", {"wheelDeltaY": 10}))
-  }, false);
-  scrollDownButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(scrollDownButton);
-  var throwButton = document.createElement('button');
-  throwButton.id = "hideButton"
-  throwButton.textContent = "Q";
-  throwButton.style.cssText = "right:0vh;bottom:10vh;"
-  throwButton.addEventListener("touchstart", function(e){
-    window.inInventory = (window.fakelock != null)
-    keyEvent("q", "keydown");
-  }, false);
-  throwButton.addEventListener("touchend", function(e){keyEvent("q", "keyup")}, false);
-  throwButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-  document.body.appendChild(throwButton);
+  
+	let forwardButton = createTouchButton("forwardButton", "inGame");
+	forwardButton.textContent = "▲";
+	forwardButton.style.cssText = "left:10vh;bottom:20vh;"
+	forwardButton.addEventListener("touchstart", function(e){keyEvent("w", "keydown")}, false);
+	forwardButton.addEventListener("touchend", function(e){keyEvent("w", "keyup")}, false);
+	document.body.appendChild(forwardButton);
+	let rightButton = createTouchButton("rightButton", "inGame");
+	rightButton.textContent = "▶";
+	rightButton.style.cssText = "left:20vh;bottom:10vh;"
+	rightButton.addEventListener("touchstart", function(e){keyEvent("d", "keydown")}, false);
+	rightButton.addEventListener("touchend", function(e){keyEvent("d", "keyup")}, false);
+	document.body.appendChild(rightButton);
+	let leftButton = createTouchButton("leftButton", "inGame");
+	leftButton.textContent = "◀";
+	leftButton.style.cssText = "left: 0vh; bottom:10vh;"
+	leftButton.addEventListener("touchstart", function(e){keyEvent("a", "keydown")}, false);
+	leftButton.addEventListener("touchend", function(e){keyEvent("a", "keyup")}, false);
+	document.body.appendChild(leftButton);
+	let backButton = createTouchButton("backButton", "inGame");
+	backButton.textContent = "▼";
+	backButton.style.cssText = "left:10vh;bottom:0vh;"
+	backButton.addEventListener("touchstart", function(e){keyEvent("s", "keydown")}, false);
+	backButton.addEventListener("touchend", function(e){keyEvent("s", "keyup")}, false);
+	document.body.appendChild(backButton);
+	let jumpButton = createTouchButton("jumpButton", "inGame");
+	jumpButton.textContent = "⇧";
+	jumpButton.style.cssText = "right:10vh;bottom:10vh;"
+	jumpButton.addEventListener("touchstart", function(e){keyEvent(" ", "keydown")}, false);
+	jumpButton.addEventListener("touchend", function(e){keyEvent(" ", "keyup")}, false);
+	document.body.appendChild(jumpButton);
+	let crouchButton = createTouchButton("crouchButton", "inGame");
+	crouchButton.textContent = "⇩";
+	crouchButton.style.cssText = "left:10vh;bottom:10vh;"
+	crouchButton.addEventListener("touchstart", function(e){shiftKeyEvent("keydown")}, false);
+	crouchButton.addEventListener("touchend", function(e){shiftKeyEvent("keyup")}, false);
+	document.body.appendChild(crouchButton);
+	let inventoryButton = createTouchButton("inventoryButton", "inGame");
+	inventoryButton.textContent = "🎒";
+	inventoryButton.style.cssText = "right:0vh;bottom:0vh;"
+	inventoryButton.addEventListener("touchstart", function(e){keyEvent("e", "keydown")}, false);
+	inventoryButton.addEventListener("touchend", function(e){keyEvent("e", "keyup")}, false);
+	document.body.appendChild(inventoryButton);
+	let chatButton = createTouchButton("chatButton", "inGame");
+	chatButton.textContent = "💬";
+	chatButton.style.cssText = "right:0vh;top:0vh;"
+	chatButton.addEventListener("touchstart", function(e){keyEvent("t", "keydown")}, false);
+	chatButton.addEventListener("touchend", function(e){keyEvent("t", "keyup")}, false);
+	document.body.appendChild(chatButton);
+	let exitButton = createTouchButton("exitButton", "inAll");
+	exitButton.textContent = "⮐";
+	exitButton.style.cssText = "left:0vh;top:0vh;"
+	exitButton.addEventListener("touchstart", function(e){keyEvent("À", "keydown")}, false);
+	exitButton.addEventListener("touchend", function(e){keyEvent("À", "keyup")}, false);
+	document.body.appendChild(exitButton);
+	// input for keyboard button
+	let hiddenInput = document.createElement('input');
+	hiddenInput.id = "hiddenInput"
+	hiddenInput.style.cssText = "opacity:0;z-index:-99999";
+	document.body.appendChild(hiddenInput);
+	let keyboardButton = createTouchButton("keyboardButton", "inMenu");
+	keyboardButton.textContent = "⌨️";
+	keyboardButton.style.cssText = "left:10vh;top:0vh;"
+	keyboardButton.addEventListener("touchstart", function(e){e.preventDefault();hiddenInput.blur()}, false);
+	keyboardButton.addEventListener("touchend", function(e){hiddenInput.select()}, false);
+	document.body.appendChild(keyboardButton);
+	let placeButton = createTouchButton("placeButton", "inGame");
+	placeButton.textContent = "⊹";
+	placeButton.style.cssText = "right:0vh;bottom:20vh;"
+	placeButton.addEventListener("touchstart", function(e){mouseEvent(2, "mousedown", canvas)}, false);
+	placeButton.addEventListener("touchend", function(e){mouseEvent(2, "mouseup", canvas)}, false);
+	document.body.appendChild(placeButton);
+	let breakButton = createTouchButton("breakButton", "inGame");
+	breakButton.textContent = "🗡";
+	breakButton.style.cssText = "right:10vh;bottom:20vh;"
+	breakButton.addEventListener("touchstart", function(e){mouseEvent(0, "mousedown", canvas)}, false);
+	breakButton.addEventListener("touchend", function(e){mouseEvent(0, "mouseup", canvas)}, false);
+	document.body.appendChild(breakButton);
+	let selectButton = createTouchButton("selectButton", "inGame");
+	selectButton.textContent = "⬚";
+	selectButton.style.cssText = "right:20vh;bottom:20vh;"
+	selectButton.addEventListener("touchstart", function(e){mouseEvent(1, "mousedown", canvas)}, false);
+	selectButton.addEventListener("touchend", function(e){mouseEvent(1, "mouseup", canvas)}, false);
+	document.body.appendChild(selectButton);
+	let scrollUpButton = createTouchButton("scrollUpButton", "inGame");
+	scrollUpButton.textContent = "⇨";
+	scrollUpButton.style.cssText = "right:0vh;bottom:30vh;"
+	scrollUpButton.addEventListener("touchstart", function(e){wheelEvent(canvas, -10)}, false);
+	document.body.appendChild(scrollUpButton);
+	let scrollDownButton = createTouchButton("scrollDownButton", "inGame");
+	scrollDownButton.textContent = "⇦";
+	scrollDownButton.style.cssText = "right:10vh;bottom:30vh;"
+	scrollDownButton.addEventListener("touchstart", function(e){wheelEvent(canvas, 10)}, false);
+	document.body.appendChild(scrollDownButton);
+	let throwButton = createTouchButton("throwButton", "inGame");
+	throwButton.textContent = "Q";
+	throwButton.style.cssText = "right:0vh;bottom:10vh;"
+	throwButton.addEventListener("touchstart", function(e){keyEvent("q", "keydown")}, false);
+	throwButton.addEventListener("touchend", function(e){keyEvent("q", "keyup")}, false);
+	document.body.appendChild(throwButton);
 }
