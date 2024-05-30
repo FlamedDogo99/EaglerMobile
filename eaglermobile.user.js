@@ -7,7 +7,7 @@
 // @license			Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
 // @grant			none
-// @version			1.3
+// @version			1.4
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at			document-start
 // ==/UserScript==
@@ -335,6 +335,14 @@ function insertCanvasElements() {
   breakButton.addEventListener("touchend", function(e){mouseEvent(0, "mouseup", canvas)}, false);
   breakButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
   document.body.appendChild(breakButton);
+  var selectButton = document.createElement('button');
+  selectButton.id = "hideButton"
+  selectButton.textContent = "⬚";
+  selectButton.style.cssText = "right:20vh;bottom:20vh;"
+  selectButton.addEventListener("touchstart", function(e){mouseEvent(1, "mousedown", canvas)}, false);
+  selectButton.addEventListener("touchend", function(e){mouseEvent(1, "mouseup", canvas)}, false);
+  selectButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
+  document.body.appendChild(selectButton);
   var scrollUpButton = document.createElement('button');
   scrollUpButton.id = "hideButton"
   scrollUpButton.textContent = "⇨";
