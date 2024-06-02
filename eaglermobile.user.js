@@ -20,7 +20,7 @@ function isMobile() {
 		return false;
 	}
 }
-if(!isMobile()) {
+if(isMobile()) {
 	
 window.crouchLock = false;
 window.sprintLock = false;
