@@ -120,7 +120,48 @@ function gamepadPolling() {
 				} else {
 					keyEvent("e", "keyup");
 				}
-        }
+				if(gamepad.buttons[13].pressed) {
+					keyEvent("q", "keydown");
+				} else {
+					keyEvent("q", "keyup");
+				}
+				if(gamepad.buttons[2].pressed) {
+					keyEvent("e", "keydown");
+				} else {
+					keyEvent("e", "keyup");
+				}
+				if(gamepad.buttons[1].pressed) {
+					shiftKeyEvent("keydown");
+				} else {
+					shiftKeyEvent("keyup");
+				}
+				if(gamepad.buttons[11].pressed) {
+					shiftKeyEvent("keydown");
+				} else {
+					shiftKeyEvent("keyup");
+				}
+				if(gamepad.buttons[10].pressed)  {
+					keyEvent("r", "keydown"); // Press Ctrl key
+				} else {
+					keyEvent("r", "keyup"); // Release Ctrl key
+				}
+				// pause is keyEvent("À", "keyup")
+				if(gamepad.buttons[9].pressed) {
+					keyEvent("À", "keydown");
+				} else {
+					keyEvent("À", "keyup");
+				}
+				//wheelEvent(canvas, -10) is scroll up
+				//wheelEvent(canvas, 10) is scroll down
+				if(gamepad.buttons[4].pressed) {
+					wheelEvent(canvas, 10);
+				}
+				if(gamepad.buttons[5].pressed) {
+					wheelEvent(canvas, -10);
+				}
+
+
+		}
     }
 
     // Continue polling
