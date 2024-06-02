@@ -230,14 +230,17 @@ function insertCanvasElements() {
         	startTouchX = touch.pageX;
         }
         let movementX = touch.pageX - startTouchX;
-        console.log(movementX)
         if((movementX * 10) > window.innerHeight) {
         	strafeRightButton.classList.add("active");
 			strafeLeftButton.classList.remove("active");
+			keyEvent("d", "keydown");
+			keyEvent("a", "keyup");
         	
         } else if ((movementX * 10) < (0 - window.innerHeight)) {
         	strafeLeftButton.classList.add("active");
 			strafeRightButton.classList.remove("active");
+			keyEvent("a", "keydown");
+			keyEvent("d", "keyup");
         } else {
         	strafeRightButton.classList.remove("active");
 			strafeLeftButton.classList.remove("active");
