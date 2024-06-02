@@ -17,6 +17,11 @@
 // @unwrap
 // ==/UserScript==
 
+console.log("Eagler Mobile loaded");
+console.log("version RC2.1.1");
+
+ModAPI.clientBrand = "EaglerCraft Mobile";
+
 // Gamepad Disconnect / connect
 
 window.addEventListener("gamepaddisconnected", (e) => {
@@ -110,55 +115,44 @@ function gamepadPolling() {
                 }
             }
 			// Assuming the right stick is represented by axes 2 (X-axis) and 3 (Y-axis)
-				if(gamepad.buttons[0].pressed) {
-					keyEvent(" ", "keydown");
-				} else {
-					keyEvent(" ", "keyup");
-				}
-				if(gamepad.buttons[3].pressed) {
-					keyEvent("e", "keydown");
-				} else {
-					keyEvent("e", "keyup");
-				}
-				if(gamepad.buttons[13].pressed) {
-					keyEvent("q", "keydown");
-				} else {
-					keyEvent("q", "keyup");
-				}
-				if(gamepad.buttons[2].pressed) {
-					keyEvent("e", "keydown");
-				} else {
-					keyEvent("e", "keyup");
-				}
-				if(gamepad.buttons[1].pressed) {
-					shiftKeyEvent("keydown");
-				} else {
-					shiftKeyEvent("keyup");
-				}
-				if(gamepad.buttons[11].pressed) {
-					shiftKeyEvent("keydown");
-				} else {
-					shiftKeyEvent("keyup");
-				}
-				if(gamepad.buttons[10].pressed)  {
-					keyEvent("r", "keydown"); // Press Ctrl key
-				} else {
-					keyEvent("r", "keyup"); // Release Ctrl key
-				}
-				// pause is keyEvent("À", "keyup")
-				if(gamepad.buttons[9].pressed) {
-					keyEvent("À", "keydown");
-				} else {
-					keyEvent("À", "keyup");
-				}
+			let buttonStates = [];
+			let buttonKeyMapping = {
+				0: " ",
+				3: "e",
+				13: "q",
+				2: "e",
+				1: "À",
+				11: "shift",
+				10: "r",
+				9: "À"
+			};
+
+			// Inside your gamepadPolling function...
+			for(let button in buttonKeyMapping) {
+    if(gamepad.buttons[button].pressed) {
+        if (!buttonStates[button]) {
+            if (buttonKeyMapping[button] === "shift") {
+                shiftKeyEvent("keydown");
+            } else {
+                keyEvent(buttonKeyMapping[button], "keydown");
+            }
+            buttonStates[button] = true;
+        }
+    } else if (buttonStates[button]) {
+        if (buttonKeyMapping[button] === "shift") {
+            shiftKeyEvent("keyup");
+        } else {
+            keyEvent(buttonKeyMapping[button], "keyup");
+        }
+        buttonStates[button] = false;
+    }
+}
 				if(gamepad.buttons[4].pressed) {
-					wheelEvent(canvas, 10);
+					wheelEvent(canvas, 2);
 				}
 				if(gamepad.buttons[5].pressed) {
-					wheelEvent(canvas, -10);
+					wheelEvent(canvas, -2);
 				}
-
-				// left click  0/  right click 2 / middle click 1
 				if(gamepad.buttons[7].pressed) {
 					mouseEvent(0, "mousedown", canvas)
 				} else {
@@ -169,9 +163,6 @@ function gamepadPolling() {
 				} else {
 					mouseEvent(2, "mouseup", canvas)
 				}
-
-
-
 		}
     }
 
