@@ -21,8 +21,7 @@ function isMobile() {
 	}
 }
 if(!isMobile()) {
-	alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
-}
+	
 window.crouchLock = false;
 window.sprintLock = false;
 // Used for changing touchmove events to mousemove events
@@ -602,3 +601,4 @@ customStyle.textContent = `
 }
     `;
 document.documentElement.appendChild(customStyle);
+}
