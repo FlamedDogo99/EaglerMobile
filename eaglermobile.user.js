@@ -228,7 +228,6 @@ function insertCanvasElements() {
 
         if (!startTouchX) {
         	startTouchX = touch.pageX;
-        	console.log(STARTED)
         }
         let movementX = touch.pageX - startTouchX;
         console.log(movementX)
