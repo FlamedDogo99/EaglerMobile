@@ -93,7 +93,6 @@ function gamepadPolling() {
             keyEvent("a", "keyup");
             keyEvent("s", "keyup");
             keyEvent("d", "keyup");
-			keyEvent("e", "keyup");
 
             if(Math.abs(leftStickX) > deadzone || Math.abs(leftStickY) > deadzone) {
                 if(leftStickY < 0) {
@@ -108,6 +107,7 @@ function gamepadPolling() {
                 if(leftStickX < 0) {
                     keyEvent("a", "keydown"); // Left
                 }
+            }
 
 				// Buttons Clicks
 				if(gamepad.buttons[0].pressed) {
@@ -120,7 +120,6 @@ function gamepadPolling() {
 				} else {
 					keyEvent("e", "keyup");
 				}
-            }
         }
     }
 
