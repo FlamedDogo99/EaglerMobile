@@ -2,15 +2,10 @@
 
 ## A userscript that allows eaglercraft to run on iOS safari
 To-do
-- [ ] Strafe buttons when holding forward
-- [ ] Crouch lock on hold
-- [ ] Sprint button (sperate from double tapping forward)
 - [ ] Gamepad support
 - [ ] Cancel button for file upload
 - [ ] Styling for file upload
 - [ ] Back button for Kiwi browser?
-- [ ] Re-orginize button layout
-- [ ] Redo the display button functions
  
 Implemented
 
@@ -21,3 +16,8 @@ Implemented
 - [x] Fake cursor scroll events (Allows scrolling through hotbar and in menus)
 - [x] On-screen controls (Movement, block placement/removal/picking, inventory, item dropping, keyboard, and exiting keys)
 - [x] Styling for html, body, and canvas (So that the canvas doesn't ignore the navigation bars for viewport sizing)
+- [x] Strafe buttons when holding forward
+- [x] Crouch lock on hold
+- [x] Re-orginize button layout
+- [x] Redo the display button functions
+- [x] Sprint button (sperate from double tapping forward)
