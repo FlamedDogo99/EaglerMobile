@@ -249,6 +249,8 @@ function insertCanvasElements() {
     }, false);
     forwardButton.addEventListener("touchend", function(e) {
     	keyEvent("w", "keyup");
+		keyEvent("d", "keyup");
+		keyEvent("a", "keyup");
 		strafeRightButton.classList.remove("active");
 		strafeLeftButton.classList.remove("active");
 		strafeRightButton.classList.add("hide");
@@ -308,7 +310,7 @@ function insertCanvasElements() {
 	inventoryButton.addEventListener("touchend", function(e){keyEvent("e", "keyup")}, false);
 	document.body.appendChild(inventoryButton);
 	let exitButton = createTouchButton("exitButton", "inMenu");
-	exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:10vh;"
+	exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:8vh; width: 8vh; height: 8vh;"
 	exitButton.addEventListener("touchstart", function(e){keyEvent("À", "keydown")}, false);
 	exitButton.addEventListener("touchend", function(e){keyEvent("À", "keyup")}, false);
 	document.body.appendChild(exitButton);
@@ -318,7 +320,7 @@ function insertCanvasElements() {
 	hiddenInput.style.cssText = "opacity:0;z-index:-99999";
 	document.body.appendChild(hiddenInput);
 	let keyboardButton = createTouchButton("keyboardButton", "inMenu");
-	keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 10vh; right:0vh;"
+	keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
 	keyboardButton.addEventListener("touchstart", function(e){e.preventDefault();hiddenInput.blur()}, false);
 	keyboardButton.addEventListener("touchend", function(e){hiddenInput.select()}, false);
 	document.body.appendChild(keyboardButton);
