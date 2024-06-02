@@ -6,7 +6,7 @@
 // @downloadURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
-// @version         2.2
+// @version         2.3
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at			document-start
 // ==/UserScript==
@@ -311,8 +311,10 @@ function insertCanvasElements() {
 	document.body.appendChild(exitButton);
 	// input for keyboard button
 	let hiddenInput = document.createElement('input', true);
+	hiddenInput.type = "text"
 	hiddenInput.id = "hiddenInput"
-	hiddenInput.style.cssText = "opacity:0;z-index:-99999";
+	// hiding behind button for opacity issues
+	hiddenInput.style.cssText = "z-index: -999; top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;";
 	document.body.appendChild(hiddenInput);
 	let keyboardButton = createTouchButton("keyboardButton", "inMenu");
 	keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
