@@ -88,7 +88,7 @@ function gamepadPolling() {
             // You might want to add some deadzone to ignore small movements
             let deadzone = 0.2;
 
-            // Reset all keys to 'keyup' state
+            // Reset all movement to 'keyup' state
             keyEvent("w", "keyup");
             keyEvent("a", "keyup");
             keyEvent("s", "keyup");
