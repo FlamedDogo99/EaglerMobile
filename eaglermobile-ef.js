@@ -77,6 +77,7 @@ window.addEventListener('gamepadconnected', function(e) {
 });
 
 function gamepadPolling() {
+	var canvas = document.querySelector('canvas');
     let gamepads = navigator.getGamepads();
     for(let i = 0; i < gamepads.length; i++) {
         let gamepad = gamepads[i];
@@ -108,8 +109,7 @@ function gamepadPolling() {
                     keyEvent("a", "keydown"); // Left
                 }
             }
-
-				// Buttons Clicks
+			// Assuming the right stick is represented by axes 2 (X-axis) and 3 (Y-axis)
 				if(gamepad.buttons[0].pressed) {
 					keyEvent(" ", "keydown");
 				} else {
@@ -151,14 +151,25 @@ function gamepadPolling() {
 				} else {
 					keyEvent("À", "keyup");
 				}
-				//wheelEvent(canvas, -10) is scroll up
-				//wheelEvent(canvas, 10) is scroll down
 				if(gamepad.buttons[4].pressed) {
 					wheelEvent(canvas, 10);
 				}
 				if(gamepad.buttons[5].pressed) {
 					wheelEvent(canvas, -10);
 				}
+
+				// left click  0/  right click 2 / middle click 1
+				if(gamepad.buttons[7].pressed) {
+					mouseEvent(0, "mousedown", canvas)
+				} else {
+					mouseEvent(0, "mouseup", canvas)
+				}
+				if(gamepad.buttons[6].pressed) {
+					mouseEvent(2, "mousedown", canvas)
+				} else {
+					mouseEvent(2, "mouseup", canvas)
+				}
+
 
 
 		}
