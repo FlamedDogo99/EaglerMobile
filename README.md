@@ -1,6 +1,6 @@
 # Eagler Mobile
 
-## A userscript that allows eaglercraft to run on iOS safari
+## A userscript that allows eaglercraft to run on mobile devices
 To-do
 - [ ] Gamepad support
 - [ ] Cancel button for file upload
