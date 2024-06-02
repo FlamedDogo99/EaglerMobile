@@ -10,7 +10,7 @@
 //
 // @match			https://eaglercraft.com/mc/*
 //
-// @version         2.0
+// @version         2.1
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 //
 // @run-at			document-start
@@ -259,7 +259,8 @@ function insertCanvasElements() {
 
 		startTouchX = null;
     }, false);
-
+	strafeRightButton.classList.add("hide");
+	strafeLeftButton.classList.add("hide");
 	document.body.appendChild(forwardButton);
 	
 	
@@ -396,22 +397,22 @@ function insertCanvasElements() {
 	screenshotButton.style.cssText = "top: 0vh; margin: auto; left: 16vh; right: 0vh; width: 8vh; height: 8vh;"
 	screenshotButton.addEventListener("touchstart", function(e) {
 		keyEvent("f", "keydown");
-		keyEvent("3", "keydown");
+		keyEvent("2", "keydown");
 	}, false);
 	screenshotButton.addEventListener("touchend", function(e) {
 		keyEvent("f", "keyup");
-		keyEvent("3", "keyup");
+		keyEvent("2", "keyup");
 	}, false);
 	document.body.appendChild(screenshotButton);
 	let coordinatesButton = createTouchButton("coordinatesButton", "inGame");
 	coordinatesButton.style.cssText = "top: 0vh; margin: auto; left: 32vh; right: 0vh; width: 8vh; height: 8vh;"
 	coordinatesButton.addEventListener("touchstart", function(e) {
 		keyEvent("f", "keydown");
-		keyEvent("2", "keydown");
+		keyEvent("3", "keydown");
 	}, false);
 	coordinatesButton.addEventListener("touchend", function(e) {
-		keyEvent("5", "keyup");
-		keyEvent("2", "keyup");
+		keyEvent("f", "keyup");
+		keyEvent("3", "keyup");
 	}, false);
 	document.body.appendChild(coordinatesButton);
 }
