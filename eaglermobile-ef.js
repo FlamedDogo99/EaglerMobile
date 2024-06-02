@@ -17,6 +17,12 @@
 // @unwrap
 // ==/UserScript==
 
+// Gamepad Disconnect / connect
+
+window.addEventListener("gamepaddisconnected", (e) => {
+	controllerIndex = null;
+	console.log("Gamepad disconnected");
+});
 
 function isMobile() {
 	try {
@@ -57,6 +63,56 @@ function wheelEvent(canvas, delta) {
 	canvas.dispatchEvent(new WheelEvent("wheel", {
 		"wheelDeltaY": delta
   }));
+}
+// Check for gamepad support
+if (!('getGamepads' in navigator)) {
+    console.log('Gamepad API not supported');
+}
+
+// Listen for gamepad connection
+window.addEventListener('gamepadconnected', function(e) {
+    console.log('Gamepad connected');
+    // Start polling for button presses
+    gamepadPolling();
+});
+
+function gamepadPolling() {
+    let gamepads = navigator.getGamepads();
+    for(let i = 0; i < gamepads.length; i++) {
+        let gamepad = gamepads[i];
+        if(gamepad) {
+            // Assuming the left stick is represented by axes 0 (X-axis) and 1 (Y-axis)
+            let leftStickX = gamepad.axes[0];
+            let leftStickY = gamepad.axes[1];
+
+            // You might want to add some deadzone to ignore small movements
+            let deadzone = 0.2;
+            if(Math.abs(leftStickX) > deadzone) {
+                if(leftStickX > 0) {
+                    keyEvent("d", "keydown"); // Right
+                } else {
+                    keyEvent("a", "keydown"); // Left
+                }
+            } else {
+                keyEvent("d", "keyup");
+                keyEvent("a", "keyup");
+            }
+
+            if(Math.abs(leftStickY) > deadzone) {
+                if(leftStickY > 0) {
+                    keyEvent("s", "keydown"); // Down
+                } else {
+                    keyEvent("w", "keydown"); // Up
+                }
+            } else {
+                keyEvent("s", "keyup");
+                keyEvent("w", "keyup");
+            }
+        }
+    }
+
+    // Continue polling
+    requestAnimationFrame(gamepadPolling);
 }
 function setButtonVisibility(pointerLocked) {
 	let inGameStyle = document.getElementById('inGameStyle');
@@ -416,7 +472,10 @@ function insertCanvasElements() {
 	}, false);
 	document.body.appendChild(coordinatesButton);
 }
-// CSS for touch screen buttons, along with fixing iOS's issues with 100vh ignoring the naviagtion bar, and actually disabling zoom because safari ignores user-scalable=no :(
+
+
+
+
 let customStyle = document.createElement("style");
 customStyle.textContent = `
     .mobileControl, .mobileControl:active, .mobileControl.active{
