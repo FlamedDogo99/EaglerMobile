@@ -87,26 +87,39 @@ function gamepadPolling() {
 
             // You might want to add some deadzone to ignore small movements
             let deadzone = 0.2;
-            if(Math.abs(leftStickX) > deadzone) {
-                if(leftStickX > 0) {
-                    keyEvent("d", "keydown"); // Right
-                } else {
-                    keyEvent("a", "keydown"); // Left
-                }
-            } else {
-                keyEvent("d", "keyup");
-                keyEvent("a", "keyup");
-            }
 
-            if(Math.abs(leftStickY) > deadzone) {
-                if(leftStickY > 0) {
-                    keyEvent("s", "keydown"); // Down
-                } else {
+            // Reset all keys to 'keyup' state
+            keyEvent("w", "keyup");
+            keyEvent("a", "keyup");
+            keyEvent("s", "keyup");
+            keyEvent("d", "keyup");
+			keyEvent("e", "keyup");
+
+            if(Math.abs(leftStickX) > deadzone || Math.abs(leftStickY) > deadzone) {
+                if(leftStickY < 0) {
                     keyEvent("w", "keydown"); // Up
                 }
-            } else {
-                keyEvent("s", "keyup");
-                keyEvent("w", "keyup");
+                if(leftStickY > 0) {
+                    keyEvent("s", "keydown"); // Down
+                }
+                if(leftStickX > 0) {
+                    keyEvent("d", "keydown"); // Right
+                }
+                if(leftStickX < 0) {
+                    keyEvent("a", "keydown"); // Left
+                }
+
+				// Buttons Clicks
+				if(gamepad.buttons[0].pressed) {
+					keyEvent(" ", "keydown");
+				} else {
+					keyEvent(" ", "keyup");
+				}
+				if(gamepad.buttons[3].pressed) {
+					keyEvent("e", "keydown");
+				} else {
+					keyEvent("e", "keyup");
+				}
             }
         }
     }
