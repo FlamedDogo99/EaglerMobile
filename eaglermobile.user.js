@@ -6,7 +6,7 @@
 // @downloadURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match			https://eaglercraft.com/mc/*
-// @version         2.4
+// @version         2.3
 // @updateURL		https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at			document-start
 // ==/UserScript==
@@ -23,7 +23,6 @@ function isMobile() {
 if(!isMobile()) {
 	alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
 }
-window.keyboardEnabled = false;
 window.crouchLock = false;
 window.sprintLock = false;
 // Used for changing touchmove events to mousemove events
@@ -106,7 +105,7 @@ document.exitFullscreen = function() {
 }
 
 // FILE UPLOADING
-// Safari doesn't recognize the element.click() used to display the file uploader as an action performed by the user, so it ignores it.
+// Safari doesn't recognize the element.click() used to display the file uplaoder as an action performed by the user, so it ignores it.
 // This hijacks the element.createElement() function to add the file upload to the DOM, so the user can manually press the button again.
 var oldCreate = document.createElement;
 document.createElement = function(type, ignore) {
@@ -172,17 +171,6 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
 	touchButton.classList.add("mobileControl");
 	touchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
 	return touchButton;
-}
-
-function toggleKeyboard() {
-	const keyboardInput = document.getElementById('hiddenInput');
-	if (window.keyboardEnabled) {
-		window.keyboardEnabled = false;
-		keyboardInput.blur();
-	} else {
-		window.keyboardEnabled = true;
-		keyboardInput.select();
-	}
 }
 
 waitForElm('canvas').then(() => {insertCanvasElements()});
@@ -323,13 +311,15 @@ function insertCanvasElements() {
 	document.body.appendChild(exitButton);
 	// input for keyboard button
 	let hiddenInput = document.createElement('input', true);
+	hiddenInput.type = "text"
 	hiddenInput.id = "hiddenInput"
-	hiddenInput.style.cssText = "opacity:0;z-index:-99999";
+	// hiding behind button for opacity issues
+	hiddenInput.style.cssText = "z-index: -999; top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;";
 	document.body.appendChild(hiddenInput);
 	let keyboardButton = createTouchButton("keyboardButton", "inMenu");
 	keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
 	keyboardButton.addEventListener("touchstart", function(e){e.preventDefault();hiddenInput.blur()}, false);
-	keyboardButton.addEventListener("touchend", function(e){e.preventDefault();toggleKeyboard()}, false);
+	keyboardButton.addEventListener("touchend", function(e){hiddenInput.select()}, false);
 	document.body.appendChild(keyboardButton);
 	let placeButton = createTouchButton("placeButton", "inGame");
 	placeButton.style.cssText = "right:0vh;bottom:20vh;"

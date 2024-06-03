@@ -6,7 +6,6 @@ To-do
 - [ ] Cancel button for file upload
 - [ ] Styling for file upload
 - [ ] Back button for Kiwi browser?
-- [ ] Fix keyboard input for Android devices
  
 Implemented
 
