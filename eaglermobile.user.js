@@ -30,25 +30,44 @@ window.sprintLock = false;
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
+// Polyfill for apply
+Function.prototype.polyfillApply = function(currentContext = {}, arg = []) {
+	if (typeof this !== 'function') {
+		throw new Error(this + "it's not callable");
+	}
+	if (!Array.isArray(arg)) {
+		throw new TypeError('CreateListFromArrayLike called on non-object')
+	}
+	currentContext.fn = this;
+	currentContext.fn(...arg);
+}
+// Polyfill for call
+Function.prototype.polyfillCall = function(currentContext = {}, ...arg) {
+	if (typeof this !== 'function') {
+		throw new Error(this + "it's not callable");
+	}
+	currentContext.fn = this;
+	currentContext.fn(...arg);
+}
+
 // Ignores any keydown event that doesn't have the isValid parameter.
-const proto = EventTarget.prototype;
 const _addEventListener = EventTarget.prototype.addEventListener;
-Object.defineProperty(proto, "addEventListener", {
-    value: function (type, fn, ...rest) {       
-        _addEventListener.call(this, type, function(...args) {
-            if(type === 'keydown' && (!args[0].isValid)) {
-                return;
-            }
-            return fn.apply(this, args);
-        }, ...rest);
-    }
+Object.defineProperty(EventTarget.prototype, "addEventListener", {
+  value: function (type, fn, ...rest) {       
+      _addEventListener.call(this, type, function(...args) {
+        if(type === 'keydown' && (!args[0].isValid)) {
+            return;
+        }
+        return fn.polyfillApply(this, args);
+      }, ...rest);
+  }
 });
-//Allows keyboard to type in input
 const _preventDefault = Event.prototype.preventDefault;
+// Allows typing in #hiddenInput
 Object.defineProperty(Event.prototype, "preventDefault", {
     value: function () {
         if(document.activeElement.id != "hiddenInput") {
-            _preventDefault.call(this);
+            _preventDefault.polyfillCall(this);
         }
     }
 });
@@ -99,55 +118,62 @@ function setButtonVisibility(pointerLocked) {
 // When requestpointerlock is called, this dispatches an event, saves the requested element to window.fakelock, and unhides the touch controls
 window.fakelock = null;
 
-Element.prototype.requestPointerLock = function() {
-    window.fakelock = this
-    document.dispatchEvent(new Event('pointerlockchange'));
-    console.log("requested pointerlock")
-    setButtonVisibility(true);
-    return true
-}
+Object.defineProperty(Element.prototype, "requestPointerLock", {
+	value: function() {
+		window.fakelock = this
+		document.dispatchEvent(new Event('pointerlockchange'));
+		setButtonVisibility(true);
+		return true
+	}
+});
 
 
 // Makes pointerLockElement return window.fakelock
-Object.defineProperty(document, "pointerLockElement", {
+Object.defineProperty(Document.prototype, "pointerLockElement", {
     get: function() {
         return window.fakelock;
     }
 });
 // When exitPointerLock is called, this dispatches an event, clears the
-document.exitPointerLock = function() {
-    window.fakelock = null
-    document.dispatchEvent(new Event('pointerlockchange'));
-    setButtonVisibility(false);
-    return true
-}
+Object.defineProperty(Document.prototype, "exitPointerLock", {
+	value: function() {
+		window.fakelock = null
+		document.dispatchEvent(new Event('pointerlockchange'));
+		setButtonVisibility(false);
+		return true
+	}
+});
 
 // FULLSCREEN
 window.fakefull = null;
 // Stops the client from crashing when fullscreen is requested
-Element.prototype.requestFullscreen = function() {
-    window.fakefull = this
-    document.dispatchEvent(new Event('fullscreenchange'));
-    return true
-}
+Object.defineProperty(Element.prototype, "requestFullscreen", {
+	value: function() {
+		window.fakefull = this
+		document.dispatchEvent(new Event('fullscreenchange'));
+		return true
+	}
+});
 Object.defineProperty(document, "fullscreenElement", {
     get: function() {
         return window.fakefull;
     }
 });
-document.exitFullscreen = function() {
-    window.fakefull = null
-    document.dispatchEvent(new Event('fullscreenchange'));
-    return true
-}
+Object.defineProperty(Document.prototype, "exitFullscreen", {
+	value: function() {
+		window.fakefull = null
+		document.dispatchEvent(new Event('fullscreenchange'));
+		return true
+	}
+});
 
 // FILE UPLOADING
 // Safari doesn't recognize the element.click() used to display the file uploader as an action performed by the user, so it ignores it.
 // This hijacks the element.createElement() function to add the file upload to the DOM, so the user can manually press the button again.
-var oldCreate = document.createElement;
+const _createElement = document.createElement;
 document.createElement = function(type, ignore) {
-    this.oldCreate = oldCreate;
-    let element = this.oldCreate(type);
+    this._createElement = _createElement;
+    let element = this._createElement(type);
     if(type == "input" && !ignore) {
         let newElement = document.querySelector('input');
         if(!newElement) {
@@ -162,7 +188,7 @@ document.createElement = function(type, ignore) {
         newElement.hidden = false;
         return newElement;
     }
-    return this.oldCreate(type);
+    return this._createElement(type);
 }
 
 // Lazy way to hide touch controls through CSS.
