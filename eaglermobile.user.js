@@ -361,7 +361,7 @@ function insertCanvasElements() {
     let hiddenInput = document.createElement('input', true);
     hiddenInput.id = "hiddenInput"
     hiddenInput.classList.add("inMenu")
-    hiddenInput.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10";
+    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
         hiddenInput.value = " "; // We need a character to detect deleting
