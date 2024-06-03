@@ -360,7 +360,7 @@ function insertCanvasElements() {
     // input for keyboard button
     let hiddenInput = document.createElement('input', true);
     hiddenInput.id = "hiddenInput"
-    hiddenInput.style.cssText = "opacity:0;z-index:-99999";
+    hiddenInput.style.cssText = "position:absolute;left:0px;top:0px;width:50px;height:50px;font-size:20px";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
         hiddenInput.value = " "; // We need a character to detect deleting
