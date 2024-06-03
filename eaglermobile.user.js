@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.5
+// @version         2.6
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -62,8 +62,8 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
       }, ...rest);
   }
 });
-const _preventDefault = Event.prototype.preventDefault;
 // Allows typing in #hiddenInput
+const _preventDefault = Event.prototype.preventDefault;
 Object.defineProperty(Event.prototype, "preventDefault", {
     value: function () {
         if(document.activeElement.id != "hiddenInput") {
