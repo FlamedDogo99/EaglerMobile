@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.16
+// @version         2.17
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -60,13 +60,6 @@ Event.prototype.preventDefault = function() {
       this._preventDefault();
   }
 }
-window.addEventListener("keydown", function(e) {
-    if((e.key == null || e.keyCode == null || e.which == null) && !window.keyboardFix) {
-        window.keyboardFix = true;
-        keyEvent(window.lastKey, "keydown")
-        keyEvent(window.lastKey, "keyup")
-    }
-}, false);
 // Key and mouse events
 // Note: the client must have the key, keyCode, and which parameters defined or it will crash
 // Note: for text inputs, the client only reads from the "key" paramater
@@ -392,6 +385,13 @@ function insertCanvasElements() {
                 keyEvent("backspace", "keydown")
                 keyEvent("backspace", "keyup")
             }
+        }
+    }, false);
+    hiddenInput.addEventListener("keydown", function(e) {
+        if((e.key == null || e.keyCode == null || e.which == null) && !window.keyboardFix) {
+            window.keyboardFix = true;
+            keyEvent(window.lastKey, "keydown")
+            keyEvent(window.lastKey, "keyup")
         }
     }, false);
     document.body.appendChild(hiddenInput);
