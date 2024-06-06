@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.6
+// @version         2.7
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -30,47 +30,25 @@ window.sprintLock = false;
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
-// Polyfill for apply
-Function.prototype.polyfillApply = function(currentContext = {}, arg = []) {
-	if (typeof this !== 'function') {
-		throw new Error(this + "it's not callable");
-	}
-	if (!Array.isArray(arg)) {
-		throw new TypeError('CreateListFromArrayLike called on non-object')
-	}
-	currentContext.fn = this;
-	currentContext.fn(...arg);
-}
-// Polyfill for call
-Function.prototype.polyfillCall = function(currentContext = {}, ...arg) {
-	if (typeof this !== 'function') {
-		throw new Error(this + "it's not callable");
-	}
-	currentContext.fn = this;
-	currentContext.fn(...arg);
-}
-
-// Ignores any keydown event that doesn't have the isValid parameter.
-const _addEventListener = EventTarget.prototype.addEventListener;
-Object.defineProperty(EventTarget.prototype, "addEventListener", {
-  value: function (type, fn, ...rest) {       
-      _addEventListener.call(this, type, function(...args) {
+// Ignores keydown events that don't have the isValid parameter set to true
+var _addEventListener = EventTarget.prototype.addEventListener;
+EventTarget.prototype.addEventListener = function(type, fn, capture) {
+    this._addEventListener = _addEventListener;
+    this._addEventListener(type, function(...args) {
         if(type === 'keydown' && (!args[0].isValid)) {
             return;
         }
-        return fn.polyfillApply(this, args);
-      }, ...rest);
-  }
-});
+        return fn(...args);
+    }, capture);
+}
 // Allows typing in #hiddenInput
 const _preventDefault = Event.prototype.preventDefault;
-Object.defineProperty(Event.prototype, "preventDefault", {
-    value: function () {
-        if(document.activeElement.id != "hiddenInput") {
-            _preventDefault.polyfillCall(this);
-        }
-    }
-});
+Event.prototype.preventDefault = function() {
+  if(document.activeElement.id != "hiddenInput") {
+      this._preventDefault =  _preventDefault;
+      this._preventDefault();
+  }
+}
 // Key and mouse events
 function keyEvent(name, state) {
     const keyName = name.toUpperCase().charCodeAt(0);
