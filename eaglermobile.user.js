@@ -373,7 +373,7 @@ function insertCanvasElements() {
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function hiddenInputHandler(e) {
-        let inputData = e.data ? "delete" // backspace makes null
+        let inputData = e.data ?? "delete"; // backspace makes null
         window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
         if(window.keyboardFix) {
