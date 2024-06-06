@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.12
+// @version         2.13
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -84,7 +84,7 @@ function hiddenInputHandler (e) {
     }
 }
 window.addEventListener("keydown", function(e) {
-    if((e.key == null || e.keyCode == null || e.which = null) && !window.keyboardFix) {
+    if((e.key == null || e.keyCode == null || e.which == null) && !window.keyboardFix) {
         window.keyboardFix = true;
         keyEvent(window.lastKey, "keydown")
         keyEvent(window.lastKey, "keyup")
