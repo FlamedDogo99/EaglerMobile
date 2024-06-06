@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.13
+// @version         2.14
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -395,7 +395,7 @@ function insertCanvasElements() {
     // We are hiding the text input behind button because opacity was causing problems.
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
-    hiddenInput.addEventListener("input", hiddenInputHandler(e), false);
+    hiddenInput.addEventListener("input", hiddenInputHandler, false);
     document.body.appendChild(hiddenInput);
     let keyboardButton = createTouchButton("keyboardButton", "inMenu");
     keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
