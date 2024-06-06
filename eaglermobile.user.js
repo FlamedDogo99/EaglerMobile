@@ -30,6 +30,11 @@ window.sprintLock = false;
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
+// better charCodeAt function
+String.prototype.toKeyCode = function() {
+    const keyCodeList = {"0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57, "backspace": 8, "tab": 9, "enter": 13, "shift": 16, "ctrl": 17, "alt": 18, "pause_break": 19, "caps_lock": 20, "escape": 27, "page_up": 33, "page_down": 34, "end": 35, "home": 36, "left_arrow": 37, "up_arrow": 38, "right_arrow": 39, "down_arrow": 40, "insert": 45, "delete": 46, "a": 65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72, "i": 73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80, "q": 81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89, "z": 90, "left_window_key": 91, "right_window_key": 92, "select_key": 93, "numpad_0": 96, "numpad_1": 97, "numpad_2": 98, "numpad_3": 99, "numpad_4": 100, "numpad_5": 101, "numpad_6": 102, "numpad_7": 103, "numpad_8": 104, "numpad_9": 105, "multiply": 106, "add": 107, "subtract": 109, "decimal_point": 110, "divide": 111, "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117, "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123, "num_lock": 144, "scroll_lock": 145, "semi_colon": 186, "equal_sign": 187, "comma": 188, "dash": 189, "period": 190, "forward_slash": 191, "grave_accent": 192, "open_bracket": 219, "back_slash": 220, "close_braket": 221, "single_quote": 222};
+    return keyCodeList[this];
+}
 // Ignores keydown events that don't have the isValid parameter set to true
 const _addEventListener = EventTarget.prototype.addEventListener;
 Object.defineProperty(EventTarget.prototype, "addEventListener", {
@@ -56,29 +61,11 @@ Event.prototype.preventDefault = function() {
 }
 // Key and mouse events
 function keyEvent(name, state) {
-    const keyName = name.toUpperCase().charCodeAt(0);
+    const charCode = name.toKeyCode();
     let evt = new KeyboardEvent(state, {
         key: name,
-        keyCode: keyName,
-        which: keyName
-    });
-    evt.isValid = true; // Disables fix for bad keyboard input
-    window.dispatchEvent(evt);
-}
-function shiftKeyEvent(state) {
-    let evt = new KeyboardEvent(state, {
-        key: "Shift",
-        keyCode: 16,
-        which: 16
-    });
-    evt.isValid = true; // Disables fix for bad keyboard input
-    window.dispatchEvent(evt);
-}
-function deleteKeyEvent(state) {
-    let evt = new KeyboardEvent(state, {
-        key: "Backspace",
-        keyCode: 8,
-        which: 8
+        keyCode: charCode,
+        which: charCode
     });
     evt.isValid = true; // Disables fix for bad keyboard input
     window.dispatchEvent(evt);
@@ -332,14 +319,14 @@ function insertCanvasElements() {
     document.body.appendChild(backButton);
     let jumpButton = createTouchButton("jumpButton", "inGame");
     jumpButton.style.cssText = "right:10vh;bottom:10vh;"
-    jumpButton.addEventListener("touchstart", function(e){keyEvent(" ", "keydown")}, false);
-    jumpButton.addEventListener("touchend", function(e){keyEvent(" ", "keyup")}, false);
+    jumpButton.addEventListener("touchstart", function(e){keyEvent("space", "keydown")}, false);
+    jumpButton.addEventListener("touchend", function(e){keyEvent("space", "keyup")}, false);
     document.body.appendChild(jumpButton);
     
     let crouchButton = createTouchButton("crouchButton", "inGame");
     crouchButton.style.cssText = "left:10vh;bottom:10vh;"
     crouchButton.addEventListener("touchstart", function(e){
-        shiftKeyEvent("keydown");
+        keyEvent("shift", "keydown")
         window.crouchLock = window.crouchLock ? null : false
         crouchTimer = setTimeout(function(e) {
             window.crouchLock = (window.crouchLock != null);
@@ -349,7 +336,7 @@ function insertCanvasElements() {
 
     crouchButton.addEventListener("touchend", function(e) {
         if(!window.crouchLock) {
-            shiftKeyEvent("keyup");
+            keyEvent("shift", "keyup")
             crouchButton.classList.remove('active');
             window.crouchLock = false
         }
@@ -363,8 +350,8 @@ function insertCanvasElements() {
     document.body.appendChild(inventoryButton);
     let exitButton = createTouchButton("exitButton", "inMenu");
     exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:8vh; width: 8vh; height: 8vh;"
-    exitButton.addEventListener("touchstart", function(e){keyEvent("À", "keydown")}, false);
-    exitButton.addEventListener("touchend", function(e){keyEvent("À", "keyup")}, false);
+    exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keyup")}, false);
+    exitButton.addEventListener("touchend", function(e){keyEvent("`", "keyup")}, false);
     document.body.appendChild(exitButton);
     // input for keyboard button
     let hiddenInput = document.createElement('input', true);
@@ -379,17 +366,17 @@ function insertCanvasElements() {
             let inputData = e.data.charAt(0);
             let isShift = (inputData.toLowerCase() != inputData);
             if(isShift) {
-                shiftKeyEvent("keydown");
+                keyEvent("shift", "keydown")
                 keyEvent(inputData, "keydown");
                 keyEvent(inputData, "keyup");
-                shiftKeyEvent("keyup");
+                keyEvent("shift", "keyup")
             } else {
                 keyEvent(inputData, "keydown");
                 keyEvent(inputData, "keyup");
             }
         } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-            deleteKeyEvent("keydown");
-            deleteKeyEvent("keyup")
+            keyEvent("delete", "keydown")
+            keyEvent("delete", "keyup")
         }
     }, false);
     document.body.appendChild(hiddenInput);
@@ -448,8 +435,8 @@ function insertCanvasElements() {
     document.body.appendChild(sprintButton);
     let pauseButton = createTouchButton("pauseButton", "inGame");
     pauseButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 32vh; width: 8vh; height: 8vh;"
-    pauseButton.addEventListener("touchstart", function(e){keyEvent("À", "keydown")}, false);
-    pauseButton.addEventListener("touchend", function(e){keyEvent("À", "keyup")}, false);
+    pauseButton.addEventListener("touchstart", function(e){keyEvent("`", "keydown")}, false);
+    pauseButton.addEventListener("touchend", function(e){keyEvent("`", "keyup")}, false);
     document.body.appendChild(pauseButton);
     let chatButton = createTouchButton("chatButton", "inGame");
     chatButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 16vh; width: 8vh; height: 8vh;"
@@ -462,8 +449,8 @@ function insertCanvasElements() {
         keyEvent("5", "keydown");
     }, false);
     perspectiveButton.addEventListener("touchend", function(e) {
-        keyEvent("5", "keyup");
         keyEvent("f", "keyup");
+        keyEvent("5", "keyup");
     }, false);
     document.body.appendChild(perspectiveButton);
     let screenshotButton = createTouchButton("screenshotButton", "inGame");
