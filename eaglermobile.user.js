@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.11
+// @version         2.12
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -375,8 +375,8 @@ function insertCanvasElements() {
                 keyEvent(inputData, "keyup");
             }
         } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-            keyEvent("delete", "keydown")
-            keyEvent("delete", "keyup")
+            keyEvent("backspace", "keydown")
+            keyEvent("backspace", "keyup")
         }
     }, false);
     document.body.appendChild(hiddenInput);
