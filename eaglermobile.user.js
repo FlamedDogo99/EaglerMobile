@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.7
+// @version         2.8
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -31,16 +31,21 @@ var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
 // Ignores keydown events that don't have the isValid parameter set to true
-var _addEventListener = EventTarget.prototype.addEventListener;
-EventTarget.prototype.addEventListener = function(type, fn, capture) {
-    this._addEventListener = _addEventListener;
-    this._addEventListener(type, function(...args) {
-        if(type === 'keydown' && (!args[0].isValid)) {
-            return;
+const _addEventListener = EventTarget.prototype.addEventListener;
+Object.defineProperty(EventTarget.prototype, "addEventListener", {
+    value: function (type, fn, ...rest) {
+        if(type == 'keydown') {
+            _addEventListener.call(this, type, function(...args) {
+                if(!args[0].isValid) {
+                    return;
+                }
+                return fn.apply(this, args);
+            }, ...rest);
+        } else {
+            _addEventListener.call(this, type, fn, ...rest);
         }
-        return fn(...args);
-    }, capture);
-}
+    }
+});
 // Allows typing in #hiddenInput
 const _preventDefault = Event.prototype.preventDefault;
 Event.prototype.preventDefault = function() {
