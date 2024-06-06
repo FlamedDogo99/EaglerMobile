@@ -60,6 +60,10 @@ Event.prototype.preventDefault = function() {
   }
 }
 // Key and mouse events
+// Note: the client must have the key, keyCode, and which parameters defined or it will crash
+// Note: for text inputs, the client only reads from the "key" paramater
+//     * an exception to this appears to be the shift and backspace key
+// Note: for inGame inputs, the client only reads from the "keyCode character"
 function keyEvent(name, state) {
     const charCode = name.toKeyCode();
     let evt = new KeyboardEvent(state, {
