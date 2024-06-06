@@ -60,29 +60,6 @@ Event.prototype.preventDefault = function() {
       this._preventDefault();
   }
 }
-function hiddenInputHandler (e) {
-    let inputData = e.data.charAt(0)
-    window.lastKey = inputData
-    hiddenInput.value = " "; // We need a character to detect deleting
-    if(window.keyboardFix) {
-        if(e.inputType == 'insertText') {
-            let inputData = e.data.charAt(0);
-            let isShift = (inputData.toLowerCase() != inputData);
-            if(isShift) {
-                keyEvent("shift", "keydown")
-                keyEvent(inputData, "keydown");
-                keyEvent(inputData, "keyup");
-                keyEvent("shift", "keyup")
-            } else {
-                keyEvent(inputData, "keydown");
-                keyEvent(inputData, "keyup");
-            }
-        } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-            keyEvent("backspace", "keydown")
-            keyEvent("backspace", "keyup")
-        }
-    }
-}
 window.addEventListener("keydown", function(e) {
     if((e.key == null || e.keyCode == null || e.which == null) && !window.keyboardFix) {
         window.keyboardFix = true;
@@ -395,7 +372,29 @@ function insertCanvasElements() {
     // We are hiding the text input behind button because opacity was causing problems.
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
-    hiddenInput.addEventListener("input", hiddenInputHandler, false);
+    hiddenInput.addEventListener("input", function hiddenInputHandler(e) {
+        let inputData = e.data.charAt(0)
+        window.lastKey = inputData
+        hiddenInput.value = " "; // We need a character to detect deleting
+        if(window.keyboardFix) {
+            if(e.inputType == 'insertText') {
+                let inputData = e.data.charAt(0);
+                let isShift = (inputData.toLowerCase() != inputData);
+                if(isShift) {
+                    keyEvent("shift", "keydown")
+                    keyEvent(inputData, "keydown");
+                    keyEvent(inputData, "keyup");
+                    keyEvent("shift", "keyup")
+                } else {
+                    keyEvent(inputData, "keydown");
+                    keyEvent(inputData, "keyup");
+                }
+            } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
+                keyEvent("backspace", "keydown")
+                keyEvent("backspace", "keyup")
+            }
+        }
+    }, false);
     document.body.appendChild(hiddenInput);
     let keyboardButton = createTouchButton("keyboardButton", "inMenu");
     keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
