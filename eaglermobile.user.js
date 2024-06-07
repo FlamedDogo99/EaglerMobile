@@ -391,8 +391,10 @@ function insertCanvasElements() {
         if(!(e.key && e.keyCode && e.which) && !window.keyboardFix) {
         	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             window.keyboardFix = true;
-            keyEvent(window.lastKey, "keydown")
-            keyEvent(window.lastKey, "keyup")
+            if(window.lastKey) {
+            	keyEvent(window.lastKey, "keydown")
+            	keyEvent(window.lastKey, "keyup")
+            }
         }
     }, false);
     document.body.appendChild(hiddenInput);
