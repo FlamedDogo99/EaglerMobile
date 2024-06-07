@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         2.18
+// @version         2.19
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -26,7 +26,7 @@ if(!isMobile()) {
 window.keyboardEnabled = false;
 window.crouchLock = false;
 window.sprintLock = false;
-window.keyboardFix = true; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
+window.keyboardFix = false; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
 // Used for changing touchmove events to mousemove events
 var previousTouchX = null;
 var previousTouchY = null;
@@ -388,7 +388,8 @@ function insertCanvasElements() {
         }
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
-        if((e.key == null || e.keyCode == null || e.which == null) && !window.keyboardFix) {
+        if(!(e.key && e.keyCode && e.which) && !window.keyboardFix) {
+        	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             window.keyboardFix = true;
             keyEvent(window.lastKey, "keydown")
             keyEvent(window.lastKey, "keyup")
