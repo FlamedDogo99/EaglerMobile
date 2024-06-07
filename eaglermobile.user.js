@@ -355,7 +355,7 @@ function insertCanvasElements() {
     document.body.appendChild(inventoryButton);
     let exitButton = createTouchButton("exitButton", "inMenu");
     exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:8vh; width: 8vh; height: 8vh;"
-    exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keyup")}, false);
+    exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keydown")}, false);
     exitButton.addEventListener("touchend", function(e){keyEvent("`", "keyup")}, false);
     document.body.appendChild(exitButton);
     // input for keyboard button
