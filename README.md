@@ -2,11 +2,13 @@
 
 ## A userscript that allows eaglercraft to run on mobile devices
 To-do
-- [ ] Gamepad support
 - [ ] Cancel button for file upload
 - [ ] Styling for file upload
 - [ ] Back button for Kiwi browser?
-- [ ] Fix keyboard input for Android devices
+- [ ] Gamepad support
+- [ ] Seperate pointerlock fix, file upload fix, touch screen controls, and gamepad controls
+- [ ] Custom settings menu for mobile button placement, and mouse sensitivity for gamepad and touch events
+- [ ] Dynamic enable and disable of pointerlock fix, file upload fix, touch screen controls, and gamepad controls
  
 Implemented
 
@@ -22,3 +24,5 @@ Implemented
 - [x] Re-orginize button layout
 - [x] Redo the display button functions
 - [x] Sprint button (sperate from double tapping forward)
+- [x] Android-friendly keyboard capture 
+
