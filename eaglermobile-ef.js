@@ -1,17 +1,3 @@
-// ==UserScript==
-// @name            Eagler Mobile
-// @description     Allows eaglercraft to run on mobile, adds touch controls, and fixes a few mobile-related crashes
-// @author          FlamedDogo99
-// @namespace       http://github.com/FlamedDogo99
-// @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
-// @license         Apache License 2.0 - http://www.apache.org/licenses/
-// @match           https://eaglercraft.com/mc/*
-// @version         2.12
-// @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
-// @run-at          document-start
-// ==/UserScript==
-
-
 function isMobile() {
     try {
         document.createEvent("TouchEvent");
@@ -26,6 +12,7 @@ if(!isMobile()) {
 window.keyboardEnabled = false;
 window.crouchLock = false;
 window.sprintLock = false;
+window.keyboardFix = false; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
 // Used for changing touchmove events to mousemove events
 var previousTouchX = null;
 var previousTouchY = null;
@@ -41,7 +28,7 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
     value: function (type, fn, ...rest) {
         if(type == 'keydown') {
             _addEventListener.call(this, type, function(...args) {
-                if(!args[0].isValid) {
+                if(!args[0].isValid && window.keyboardFix) {
                     return;
                 }
                 return fn.apply(this, args);
@@ -354,7 +341,7 @@ function insertCanvasElements() {
     document.body.appendChild(inventoryButton);
     let exitButton = createTouchButton("exitButton", "inMenu");
     exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:8vh; width: 8vh; height: 8vh;"
-    exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keyup")}, false);
+    exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keydown")}, false);
     exitButton.addEventListener("touchend", function(e){keyEvent("`", "keyup")}, false);
     document.body.appendChild(exitButton);
     // input for keyboard button
@@ -364,23 +351,36 @@ function insertCanvasElements() {
     // We are hiding the text input behind button because opacity was causing problems.
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
-    hiddenInput.addEventListener("input", function(e) {
+    hiddenInput.addEventListener("input", function hiddenInputHandler(e) {
+        let inputData = e.data ?? "delete"; // backspace makes null
+        window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
-        if(e.inputType == 'insertText') {
-            let inputData = e.data.charAt(0);
-            let isShift = (inputData.toLowerCase() != inputData);
-            if(isShift) {
-                keyEvent("shift", "keydown")
-                keyEvent(inputData, "keydown");
-                keyEvent(inputData, "keyup");
-                keyEvent("shift", "keyup")
-            } else {
-                keyEvent(inputData, "keydown");
-                keyEvent(inputData, "keyup");
+        if(window.keyboardFix) {
+            if(e.inputType == 'insertText') {
+                let isShift = (inputData.toLowerCase() != inputData);
+                if(isShift) {
+                    keyEvent("shift", "keydown")
+                    keyEvent(inputData, "keydown");
+                    keyEvent(inputData, "keyup");
+                    keyEvent("shift", "keyup")
+                } else {
+                    keyEvent(inputData, "keydown");
+                    keyEvent(inputData, "keyup");
+                }
+            } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
+                keyEvent("backspace", "keydown")
+                keyEvent("backspace", "keyup")
             }
-        } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-            keyEvent("backspace", "keydown")
-            keyEvent("backspace", "keyup")
+        }
+    }, false);
+    hiddenInput.addEventListener("keydown", function(e) {
+        if(!(e.key && e.keyCode && e.which) && !window.keyboardFix) {
+        	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
+            window.keyboardFix = true;
+            if(window.lastKey) {
+            	keyEvent(window.lastKey, "keydown")
+            	keyEvent(window.lastKey, "keyup")
+            }
         }
     }, false);
     document.body.appendChild(hiddenInput);
