@@ -17,7 +17,7 @@ Eagler Mobile brings new functionality and benefits for the EaglerCraft web clie
 
 ## Installation
 
-The easiest way to use Eagler Mobile is to use a userscript application such as Greasemonkey. However Eagler Mobile is plain JavaScript, so you can easily deploy it in other ways as well. As an example we've included `eaglermobile.ef.js` which can be run as a mod on [EaglerForge](https://github.com/eaglerforge/EaglerForge).
+The easiest way to use Eagler Mobile is to use a userscript application such as Greasemonkey, however since Eagler Mobile is plain JavaScript you can easily deploy it in other ways as well. As an example we've included `eaglermobile.ef.js` which can be run as a mod on [EaglerForge](https://github.com/eaglerforge/EaglerForge).
 
 If you want to download the source, no building is required. The best way to download the source is with Git:
 
