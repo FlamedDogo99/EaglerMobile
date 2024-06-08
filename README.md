@@ -7,7 +7,7 @@
 
 ## About
 
-Eagler Mobile brings new functionality and benefits for the EaglerCraft web client by providing mobile-friendly touch controls, keyboard access, and other settings configirable through the EaglerCraft client. 
+Eagler Mobile brings new functionality and benefits for the EaglerCraft web client by providing mobile-friendly touch controls, keyboard access, and other settings configurable through the EaglerCraft client. 
 
 <div align="center">
 
@@ -18,6 +18,37 @@ Eagler Mobile brings new functionality and benefits for the EaglerCraft web clie
 ## Installation
 
 The easiest way to use Eagler Mobile is to use a userscript application such as Greasemonkey, however since Eagler Mobile is plain JavaScript you can easily deploy it in other ways as well. As an example we've included `eaglermobile.ef.js` which can be run as a mod on [EaglerForge](https://github.com/eaglerforge/EaglerForge).
+
+<details>
+<summary>See more examples</summary>
+
+---
+
+1. **Self hosted**
+
+If you are hosting the EaglerCraft client on your own server, you can include the mobile script in the `index.html` folder as a script.
+
+```js
+<script type="text/javascript" src="yourDirectory/eaglermobile.user.js"></script>
+
+```
+
+2. **Other userscript applications**
+
+Non-mobile browsers:
+ - Chrome, FireFox, Safari, Edge, Opera Next, Microsoft Edge: [Tampermonkey](https://www.tampermonkey.net)
+
+iOS:
+- Safari: [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887)
+- Orion: [Tampermonkey](https://www.tampermonkey.net)
+
+Android:
+- FireFox: [Tampermonkey](https://www.tampermonkey.net)
+- Kiwi Browser: [Tampermonkey](https://www.tampermonkey.net)
+
+---
+
+</details>
 
 If you want to download the source, no building is required. The best way to download the source is with Git:
 
