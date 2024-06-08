@@ -28,7 +28,7 @@ git clone https://github.com/ScratchAddons/ScratchAddons.git
 
 ### Suggestions and bug reports
 
-If you found a bug or have a suggestion [create an issue]([https://github.com/ScratchAddons/ScratchAddons/issues/new/choose](https://github.com/FlamedDogo99/EaglerMobile/issues/new/choose)) after checking for duplicates.
+If you found a bug or have a suggestion [create an issue]([https://github.com/ScratchAddons/ScratchAddons/issues/new/choose) after checking for duplicates.
 
 
 ### Features and documentation
