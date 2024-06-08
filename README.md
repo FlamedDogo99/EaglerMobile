@@ -61,6 +61,9 @@ git clone https://github.com/FlamedDogo99/EaglerMobile.git
 
 If you found a bug or have a suggestion [create an issue](https://github.com/FlamedDogo99/EaglerMobile/issues/new/choose) after checking for duplicates.
 
+### Code
+
+Before contributing code, please read our [contributing guidelines](https://github.com/FlamedDogo99/EaglerMobile/blob/master/.github/CONTRIBUTING.md).
 
 ### Features and documentation
 #### Fake API's
