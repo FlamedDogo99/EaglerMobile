@@ -134,22 +134,23 @@ Object.defineProperty(Document.prototype, "exitFullscreen", {
 const _createElement = document.createElement;
 document.createElement = function(type, ignore) {
     this._createElement = _createElement;
-    let element = this._createElement(type);
+    var element = this._createElement(type);
     if(type == "input" && !ignore) {
-        let newElement = document.querySelector('input');
-        if(!newElement) {
-            this.body.appendChild(element);
-            newElement = document.querySelector('input');
-            newElement.addEventListener('change', function(e) {
-                this.hidden = true;
-            })
-        }
-        newElement.value = null;
-        newElement.style.cssText ="position:absolute;left:0%;right:100%;top:0%;bottom:100%;width:100%;height:100%;background-color:rgba(255,255,255,0.5);";
-        newElement.hidden = false;
-        return newElement;
+    	document.querySelectorAll('#fileUpload').forEach(e => e.parentNode.removeChild(e));
+    	element.id = "fileUpload";
+    	element.addEventListener('change', function(e) {
+    		element.hidden = true;
+    		element.style.display = "none";
+    	}, {passive: false, once: true});
+    	window.addEventListener('focus', function(e) {
+            setTimeout(() => {
+                element.hidden = true;
+    			element.style.display = "none";
+            }, 300)
+        }, { once: true })
+        document.body.appendChild(element);
     }
-    return this._createElement(type);
+    return element;
 }
 
 // Lazy way to hide touch controls through CSS.
@@ -351,7 +352,7 @@ function insertCanvasElements() {
     // We are hiding the text input behind button because opacity was causing problems.
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
-    hiddenInput.addEventListener("input", function hiddenInputHandler(e) {
+    hiddenInput.addEventListener("input", function(e) {
         let inputData = e.data ?? "delete"; // backspace makes null
         window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
@@ -528,6 +529,16 @@ customStyle.textContent = `
     }
     .hide {
         display: none;
+    }
+    #fileUpload {
+    	position: absolute;
+    	left: 0;
+    	right: 100vw;
+    	top: 0; 
+    	bottom: 100vh;
+    	width: 100vw;
+    	height: 100vh;
+    	background-color:rgba(255,255,255,0.5);
     }
     .strafeRightButton {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAUGVYSWZNTQAqAAAACAACARIAAwAAAAEAAQAAh2kABAAAAAEAAAAmAAAAAAADoAEAAwAAAAEAAQAAoAIABAAAAAEAAAAWoAMABAAAAAEAAAAWAAAAAA78HUQAAAIwaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOkNvbG9yU3BhY2U+MTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KhDb0tQAAANRJREFUOBHVlMENwyAMRWnVHcqIjMEYzJAemlUidQh6aFZIApIt20FgUC/JxTb8/2wRgTFX+25i4E3UvSXyMDkIGeqc64VlfQgBfJnJwAC11oJIFWOMFJ6Zd+nshSZ/yXMCy0aj9aPH6L1HOc1xkSQqcAtCeJhWwSNAIA+dsaZhFawBwIQyVsFJLOGylkCom+ASHMy1WP151KidFDynieF6gkATSx42cYzf43o+TUnYajBNLyZh4LSzLB8mGC3YUczze5Rj1vXHvPTZTBt/e+hZl0sUO9qPMTJ6UlWFAAAAAElFTkSuQmCC");
