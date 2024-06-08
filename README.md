@@ -34,7 +34,7 @@ If you found a bug or have a suggestion [create an issue](https://github.com/Scr
 ### Features and documentation
 #### Fake API's
 - Pointerlock methods such as `Element.prototype.requestPointerLock`, `document.pointerLockElement`, and `document.exitPointerLock` are replaced with vanilla JavaScript that mimics pointerlock functionality. This allows the EaglerCraft client to load.
-- Fullscreen methods such as "Element.prototype.requestFullscreen`, `document.fullscreenElement`, and `document.exitFullscreen` are replaced with vanilla JavaScript that mimics fullscreen functionality. This fixes a crash due with viewport dimensions.
+- Fullscreen methods such as `Element.prototype.requestFullscreen`, `document.fullscreenElement`, and `document.exitFullscreen` are replaced with vanilla JavaScript that mimics fullscreen functionality. This fixes a crash due with viewport dimensions.
 
 #### Keyboard Events
 - The EaglerCraft client captures keypress through a `keydown` event listener. Because Android devices currently have an issue with `keydown` and `keyup` events, Eagler Mobile dynamically toggles between capturing `keydown` and `input` events. The state is saved in window.keyboardFix, and is toggled if a faulty keyboard event is detected.
@@ -49,11 +49,6 @@ If you found a bug or have a suggestion [create an issue](https://github.com/Scr
 
 #### File uploads
 - On MacOS and iOS safari, the EaglerCraft client's implementation of triggering the file selection dialog does not work. A rudimentary fix has been added for now.
-#### Addons
-- `addons-l10n`: Translation for addon strings (one file per addon).
-- `addon-api`: Implementation of the `addon.*` JavaScript APIs.
-- `addons`: Each addon has its own directory, which must include an addon manifest file named `addon.json`.
-- `libraries`: Third-party libraries and other utilities, some of which are used by addons.
 
 ## License
 
