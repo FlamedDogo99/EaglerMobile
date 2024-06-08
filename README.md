@@ -1,4 +1,4 @@
-# <img src="images/icon128.png" alt="Eagler Mobile Logo" align="right" width="128px"></img>Eagler Mobile
+# <img src="images/logo128.png" alt="Eagler Mobile Logo" align="right" width="128px"></img>Eagler Mobile
 
 
 
@@ -39,7 +39,7 @@ If you found a bug or have a suggestion [create an issue]([https://github.com/Sc
 #### Keyboard Events
 - The EaglerCraft client captures keypress through a `keydown` event listener. Because Android devices currently have an issue with `keydown` and `keyup` events, Eagler Mobile dynamically toggles between capturing `keydown` and `input` events. The state is saved in window.keyboardFix, and is toggled if a faulty keyboard event is detected.
 - To dispatch keyboard events, Eagler Mobile requires the use of the `keyEvent` function, in order to maintain functionality for `input` event listeners. For example, typing an uppercase `h` in the chat is as simple as:
-  ```
+  ```js
   keyEvent("shift", "keydown"); 
   keyEvent("h", "keydown");
   ```
