@@ -22,13 +22,13 @@ The easiest way to use Eagler Mobile is to use a userscript application such as 
 If you want to download the source, no building is required. The best way to download the source is with Git:
 
 ```sh
-git clone https://github.com/ScratchAddons/ScratchAddons.git
+git clone https://github.com/FlamedDogo99/EaglerMobile.git
 ```
 ## Contributing
 
 ### Suggestions and bug reports
 
-If you found a bug or have a suggestion [create an issue](https://github.com/ScratchAddons/ScratchAddons/issues/new/choose) after checking for duplicates.
+If you found a bug or have a suggestion [create an issue](https://github.com/FlamedDogo99/EaglerMobile/issues/new/choose) after checking for duplicates.
 
 
 ### Features and documentation
@@ -52,7 +52,7 @@ If you found a bug or have a suggestion [create an issue](https://github.com/Scr
 
 ## License
 
-Scratch Addons is licensed under the terms of the [Apache License, Version 2.0]([https://github.com/ScratchAddons/ScratchAddons/blob/master/LICENSE](https://github.com/FlamedDogo99/EaglerMobile/blob/main/LICENSE)).
+Eagler Mobile is licensed under the terms of the [Apache License, Version 2.0](https://github.com/FlamedDogo99/EaglerMobile/blob/main/LICENSE).
 
 ## Intended future features
 - [ ] **Gamepad support**: Mapping gamepad inputs to `keyEvent`, `wheelEvent` and `mouseEvent` functions, and implenting a controllable fake cursor for menus.
