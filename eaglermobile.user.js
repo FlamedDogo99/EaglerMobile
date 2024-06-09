@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.2
+// @version         3.0.3-alpha-1
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -54,8 +54,8 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
 });
 // Allows typing in #hiddenInput
 const _preventDefault = Event.prototype.preventDefault;
-Event.prototype.preventDefault = function() {
-  if(document.activeElement.id != "hiddenInput") {
+Event.prototype.preventDefault = function(shouldBypass) {
+  if(document.activeElement.id != "hiddenInput" || shouldBypass) {
       this._preventDefault =  _preventDefault;
       this._preventDefault();
   }
@@ -367,11 +367,13 @@ function insertCanvasElements() {
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
-        let inputData = e.data ?? "delete"; // backspace makes null
+    	e.preventDefault(true);
+        let inputData = e.data == null ? "delete" : e.data.slice(-1); // backspace makes null
         window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
         if(window.keyboardFix) {
-            if(e.inputType == 'insertText') {
+        	const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof
+            if(sliceInputType== 'i') {
                 let isShift = (inputData.toLowerCase() != inputData);
                 if(isShift) {
                     keyEvent("shift", "keydown")
@@ -382,9 +384,9 @@ function insertCanvasElements() {
                     keyEvent(inputData, "keydown");
                     keyEvent(inputData, "keyup");
                 }
-            } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-                keyEvent("backspace", "keydown")
-                keyEvent("backspace", "keyup")
+            } else if (sliceInputType == 'd') {
+                keyEvent("backspace", "keydown");
+                keyEvent("backspace", "keyup");
             }
         }
     }, false);
@@ -393,8 +395,8 @@ function insertCanvasElements() {
         	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             window.keyboardFix = true;
             if(window.lastKey) {
-            	keyEvent(window.lastKey, "keydown")
-            	keyEvent(window.lastKey, "keyup")
+            	keyEvent(window.lastKey, "keydown");
+            	keyEvent(window.lastKey, "keyup");
             }
         }
     }, false);
