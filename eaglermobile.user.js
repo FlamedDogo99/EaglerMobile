@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.4-chat-fix
+// @version         3.0.5-chat-fix
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -54,7 +54,7 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
         } else {
 //         	_addEventListener.call(this, type, fn, ...rest);
             _addEventListener.call(this, type, function(...args) {
-				console.log(`%c CALLED ${type}`, 'background: #222; color: #bada55', args);
+// 				console.log(`%c CALLED ${type}`, 'background: #222; color: #bada55', args);
                 return fn.apply(this, args);
             }, ...rest);
         }
@@ -379,7 +379,7 @@ function insertCanvasElements() {
         window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
         if(window.keyboardFix) {
-            if(e.inputType == 'insertText') {
+            if(e.inputType == 'insertText' || e.inputType == 'insertCompositionText') {
                 let isShift = (inputData.toLowerCase() != inputData);
                 if(isShift) {
                     keyEvent("shift", "keydown")
