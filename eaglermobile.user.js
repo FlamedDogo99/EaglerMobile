@@ -372,7 +372,7 @@ function insertCanvasElements() {
     hiddenInput.id = "hiddenInput"
     hiddenInput.classList.add("inMenu")
     // We are hiding the text input behind button because opacity was causing problems.
-    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;-index:-10;color: transparent;text-shadow: 0 0 0 black;";
+    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
         let inputData = e.data ?? "delete"; // backspace makes null
