@@ -47,8 +47,16 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
                 }
                 return fn.apply(this, args);
             }, ...rest);
+        } else if (type == 'blur' || type == 'mouseleave') {
+        	_addEventListener.call(this, type, function(...args) {
+                return;
+            }, ...rest);
         } else {
-            _addEventListener.call(this, type, fn, ...rest);
+//         	_addEventListener.call(this, type, fn, ...rest);
+            _addEventListener.call(this, type, function(...args) {
+				console.log(`%c CALLED ${type}`, 'background: #222; color: #bada55', args);
+                return fn.apply(this, args);
+            }, ...rest);
         }
     }
 });
@@ -459,8 +467,28 @@ function insertCanvasElements() {
     document.body.appendChild(pauseButton);
     let chatButton = createTouchButton("chatButton", "inGame");
     chatButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 16vh; width: 8vh; height: 8vh;"
-    chatButton.addEventListener("touchstart", function(e){keyEvent("t", "keydown")}, false);
-    document.body.appendChild(chatButton);
+    chatButton.addEventListener("touchstart", function(e){
+    	window.dispatchEvent(new Event("focus", {
+    		returnValue: true,
+    		srcElement: window,
+    		target: window,
+    		timeStamp: 1
+    	}));
+    	canvas.dispatchEvent(new MouseEvent("mouseenter", {
+    		offsetX: 1,
+    		offsetY: 1,
+    		pageX: 1,
+    		pageY: 1,
+    		screenX: 1,
+    		screenY: 1,
+    		x: 1,
+    		y: 1,
+    		target: canvas,
+    		toElement: canvas,
+    		view: window
+    	}));
+    	keyEvent("t", "keydown");
+    }, false);    document.body.appendChild(chatButton);
     let perspectiveButton = createTouchButton("perspectiveButton", "inGame");
     perspectiveButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 0vh; width: 8vh; height: 8vh;"
     perspectiveButton.addEventListener("touchstart", function(e) {
