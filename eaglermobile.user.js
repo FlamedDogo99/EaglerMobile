@@ -368,7 +368,9 @@ function insertCanvasElements() {
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
     	e.preventDefault(true);
-        let inputData = e.data == null ? "delete" : e.data.slice(-1); // backspace makes null
+        let inputData = e.data == null ? "delete" : e.data.slice(-1);
+        console.log("Received input!", inputData, e.inputType)
+
         window.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
         if(window.keyboardFix) {
