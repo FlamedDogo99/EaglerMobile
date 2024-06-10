@@ -41,9 +41,9 @@ function logManager() {
         self.logger = document.getElementById('log');
         console.log = function (message, options) {
             if (typeof message == 'object') {
-                self.logger.innerHTML = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
+                self.logger.innerText = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
             } else {
-                self.logger.innerHTML = message + '<br />' + self.logger.innerHTML;
+                self.logger.innerText = message + " " + self.logger.innerText;
             }
         }
     }
@@ -524,7 +524,7 @@ function insertCanvasElements() {
     }, false);
     document.body.appendChild(coordinatesButton);
     //TEMP REMOVE
-    var temp = document.createElement("div");
+    var temp = document.createElement("p");
     temp.id = "log";
     temp.classList.add("log");
     temp.style.cssText= "position: absolute; top: 8vh; margin: auto; left: 0vh; right: 0vh; height: auto; z-index:10; min-height:8vh; background:white";
