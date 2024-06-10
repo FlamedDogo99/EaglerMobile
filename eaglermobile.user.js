@@ -430,7 +430,7 @@ function insertCanvasElements() {
         }
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
-        if((e.keyCode = 229 || e.which = 229) && !unsafeWindow.keyboardFix) {
+        if((e.keyCode == 229 || e.which == 229) && !unsafeWindow.keyboardFix) {
         	unsafeWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             unsafeWindow.keyboardFix = true;
             if(unsafeWindow.lastKey) {
