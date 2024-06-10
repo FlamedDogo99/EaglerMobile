@@ -15,7 +15,7 @@
 // THIS IS LAZY AND DANGEROUS AND CAN EXPOSE USERSCRIPT INTERNALS SO PLEASE REMOVE
 // IN THE FUTURE, JUST INJECT A SCRIPT TAG
 try {
-	unsafeWindow.console.log("UNSAFE WINDOW RAGGHHH")
+	unsafeWindow.console.log("UNSAFE WINDOW");
 	alert("DANGER: This userscript is temporarily using unsafeWindow for testing purposes. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
 } catch {
 	Object.defineProperty(window, "unsafeWindow", {
@@ -411,7 +411,8 @@ function insertCanvasElements() {
         unsafeWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
 
         unsafeWindow.lastKey = inputData
-        hiddenInput.value = " "; // We need a character to detect deleting
+        // TEMP ADD BACK
+//         hiddenInput.value = " "; // We need a character to detect deleting
         if(unsafeWindow.keyboardFix) {
         	const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof
             if(sliceInputType== 'i') {
@@ -590,7 +591,12 @@ customStyle.textContent = `
 
     }
     html, body {
+    	height: 100% !important;
+        height: 100dvh !important;
         height: -webkit-fill-available !important;
+        height: -moz-available !important;
+        height: fill-available !important;
+		height: stretch !important;
         touch-action: pan-x pan-y;
     }
     .hide {
