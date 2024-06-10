@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.3-alpha-1
+// @version         3.0.3-alpha-2
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
@@ -524,7 +524,7 @@ function insertCanvasElements() {
     var temp = document.createElement("div");
     temp.id = "log";
     temp.classList.add("log");
-    temp.style.cssText= "position:absolute; top: 8vh; margin: auto; left: 0vh; right:0vh";
+    temp.style.cssText= "position:absolute; top: 8vh; margin: auto; left: 0vh; right:0vh; height: 30vh;";
     temp.innerHtml = "Loading..."
     document.body.appendChild(temp);
     document.temp = new logManager();
