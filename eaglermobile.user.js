@@ -12,17 +12,10 @@
 // @grant           unsafeWindow
 // ==/UserScript==
 
-// THIS IS LAZY AND CAN EXPOSE INTERNALS
+// THIS IS LAZY AND DANGEROUS AND CAN EXPOSE USERSCRIPT INTERNALS SO PLEASE REMOVE
 // IN THE FUTURE, JUST INJECT A SCRIPT TAG
-//try {
-//var window = unsafeWindow ?? window
-//} catch {
-//
-//}
 try {
-	if(unsafeWindow) {
-		console.log("UNSAFE WINDOW RAGGHHH")
-	}
+	unsafeWindow.console.log("UNSAFE WINDOW RAGGHHH")
 } catch {
 	Object.defineProperty(window, "unsafeWindow", {
 		value: window
@@ -437,7 +430,7 @@ function insertCanvasElements() {
         }
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
-        if(!(e.key && e.keyCode && e.which) && !unsafeWindow.keyboardFix) {
+        if((e.keyCode = 229 || e.which = 229) && !unsafeWindow.keyboardFix) {
         	unsafeWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             unsafeWindow.keyboardFix = true;
             if(unsafeWindow.lastKey) {
