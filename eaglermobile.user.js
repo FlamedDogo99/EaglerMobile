@@ -6,12 +6,19 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.3-alpha-3
+// @version         3.0.3-alpha-4
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // ==/UserScript==
 
+// THIS IS LAZY AND CAN EXPOSE INTERNALS
+// IN THE FUTURE, JUST INJECT A SCRIPT TAG
 
+try {
+window = unsafeWindow ?? window
+} catch {
+
+}
 function isMobile() {
     try {
         document.createEvent("TouchEvent");
@@ -41,9 +48,9 @@ function logManager() {
         self.logger = document.getElementById('log');
         console.log = function (message, options) {
             if (typeof message == 'object') {
-                self.logger.innerText = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
+                self.logger.innerHTML = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
             } else {
-                self.logger.innerText = message + " " + self.logger.innerText;
+                self.logger.innerHTML = message + '<br />' + self.logger.innerHTML;
             }
         }
     }
@@ -524,7 +531,7 @@ function insertCanvasElements() {
     }, false);
     document.body.appendChild(coordinatesButton);
     //TEMP REMOVE
-    var temp = document.createElement("p");
+    var temp = document.createElement("div");
     temp.id = "log";
     temp.classList.add("log");
     temp.style.cssText= "position: absolute; top: 8vh; margin: auto; left: 0vh; right: 0vh; height: auto; z-index:10; min-height:8vh; background:white";
