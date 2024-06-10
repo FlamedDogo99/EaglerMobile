@@ -591,12 +591,8 @@ customStyle.textContent = `
 
     }
     html, body {
-    	height: 100% !important;
-        height: 100dvh !important;
         height: -webkit-fill-available !important;
         height: -moz-available !important;
-        height: fill-available !important;
-		height: stretch !important;
         touch-action: pan-x pan-y;
     }
     .hide {
