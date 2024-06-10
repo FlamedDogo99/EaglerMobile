@@ -6,7 +6,7 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.3-alpha-4
+// @version         3.0.3-alpha-5
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // @grant           unsafeWindow
@@ -14,11 +14,19 @@
 
 // THIS IS LAZY AND CAN EXPOSE INTERNALS
 // IN THE FUTURE, JUST INJECT A SCRIPT TAG
-
+//try {
+//var window = unsafeWindow ?? window
+//} catch {
+//
+//}
 try {
-window = unsafeWindow ?? window
+	if(unsafeWindow) {
+		console.log("UNSAFE WINDOW RAGGHHH")
+	}
 } catch {
-
+	Object.defineProperty(window, "unsafeWindow", {
+		value: window
+	});
 }
 
 function isMobile() {
@@ -32,10 +40,11 @@ function isMobile() {
 if(!isMobile()) {
     alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
 }
-window.keyboardEnabled = false;
-window.crouchLock = false;
-window.sprintLock = false;
-window.keyboardFix = false; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
+
+unsafeWindow.keyboardEnabled = false;
+unsafeWindow.crouchLock = false;
+unsafeWindow.sprintLock = false;
+unsafeWindow.keyboardFix = false; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
 // Used for changing touchmove events to mousemove events
 var previousTouchX = null;
 var previousTouchY = null;
@@ -45,10 +54,10 @@ function logManager() {
     var self = this;
 
     self.init = function () {
-        console.log('logmanager initialized');
-        var old = console.log;
+        unsafeWindow.console.log('logmanager initialized');
+        var old = unsafeWindow.console.log;
         self.logger = document.getElementById('log');
-        console.log = function (message, options) {
+        unsafeWindow.console.log = function (message, options) {
             if (typeof message == 'object') {
                 self.logger.innerHTML = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
             } else {
@@ -74,7 +83,7 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
     value: function (type, fn, ...rest) {
         if(type == 'keydown') {
             _addEventListener.call(this, type, function(...args) {
-                if(!args[0].isValid && window.keyboardFix) {
+                if(!args[0].isValid && unsafeWindow.keyboardFix) {
                     return;
                 }
                 return fn.apply(this, args);
@@ -105,7 +114,7 @@ function keyEvent(name, state) {
         which: charCode
     });
     evt.isValid = true; // Disables fix for bad keyboard input
-    window.dispatchEvent(evt);
+    unsafeWindow.dispatchEvent(evt);
 }
 function mouseEvent(number, state, canvas) {
     canvas.dispatchEvent(new PointerEvent(state, {"button": number}))
@@ -123,11 +132,11 @@ function setButtonVisibility(pointerLocked) {
 }
 // POINTERLOCK
 // When requestpointerlock is called, this dispatches an event, saves the requested element to window.fakelock, and unhides the touch controls
-window.fakelock = null;
+unsafeWindow.fakelock = null;
 
 Object.defineProperty(Element.prototype, "requestPointerLock", {
 	value: function() {
-		window.fakelock = this
+		unsafeWindow.fakelock = this
 		document.dispatchEvent(new Event('pointerlockchange'));
 		setButtonVisibility(true);
 		return true
@@ -138,13 +147,13 @@ Object.defineProperty(Element.prototype, "requestPointerLock", {
 // Makes pointerLockElement return window.fakelock
 Object.defineProperty(Document.prototype, "pointerLockElement", {
     get: function() {
-        return window.fakelock;
+        return unsafeWindow.fakelock;
     }
 });
 // When exitPointerLock is called, this dispatches an event, clears the
 Object.defineProperty(Document.prototype, "exitPointerLock", {
 	value: function() {
-		window.fakelock = null
+		unsafeWindow.fakelock = null
 		document.dispatchEvent(new Event('pointerlockchange'));
 		setButtonVisibility(false);
 		return true
@@ -152,23 +161,23 @@ Object.defineProperty(Document.prototype, "exitPointerLock", {
 });
 
 // FULLSCREEN
-window.fakefull = null;
+unsafeWindow.fakefull = null;
 // Stops the client from crashing when fullscreen is requested
 Object.defineProperty(Element.prototype, "requestFullscreen", {
 	value: function() {
-		window.fakefull = this
+		unsafeWindow.fakefull = this
 		document.dispatchEvent(new Event('fullscreenchange'));
 		return true
 	}
 });
 Object.defineProperty(document, "fullscreenElement", {
     get: function() {
-        return window.fakefull;
+        return unsafeWindow.fakefull;
     }
 });
 Object.defineProperty(Document.prototype, "exitFullscreen", {
 	value: function() {
-		window.fakefull = null
+		unsafeWindow.fakefull = null
 		document.dispatchEvent(new Event('fullscreenchange'));
 		return true
 	}
@@ -188,7 +197,7 @@ document.createElement = function(type, ignore) {
     		element.hidden = true;
     		element.style.display = "none";
     	}, {passive: false, once: true});
-    	window.addEventListener('focus', function(e) {
+    	unsafeWindow.addEventListener('focus', function(e) {
             setTimeout(() => {
                 element.hidden = true;
     			element.style.display = "none";
@@ -246,11 +255,11 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
 
 function toggleKeyboard() {
     const keyboardInput = document.getElementById('hiddenInput');
-    if (window.keyboardEnabled) {
-        window.keyboardEnabled = false;
+    if (unsafeWindow.keyboardEnabled) {
+        unsafeWindow.keyboardEnabled = false;
         keyboardInput.blur();
     } else {
-        window.keyboardEnabled = true;
+        unsafeWindow.keyboardEnabled = true;
         keyboardInput.select();
     }
 }
@@ -269,7 +278,7 @@ function insertCanvasElements() {
         }
         e.movementX = touch.pageX - previousTouchX;
         e.movementY = touch.pageY - previousTouchY;
-        var evt = window.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
+        var evt = unsafeWindow.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
         canvas.dispatchEvent(evt);
         previousTouchX = touch.pageX;
         previousTouchY = touch.pageY;
@@ -280,7 +289,7 @@ function insertCanvasElements() {
         previousTouchY = null; 
     }, false)
     //Updates button visibility on load
-    setButtonVisibility(window.fakelock != null);
+    setButtonVisibility(unsafeWindow.fakelock != null);
     // Adds all of the touch screen controls
     // Theres probably a better way to do this but this works for now
     let strafeRightButton = createTouchButton("strafeRightButton", "inGame", "div");
@@ -306,13 +315,13 @@ function insertCanvasElements() {
             startTouchX = touch.pageX;
         }
         let movementX = touch.pageX - startTouchX;
-        if((movementX * 10) > window.innerHeight) {
+        if((movementX * 10) > unsafeWindow.innerHeight) {
             strafeRightButton.classList.add("active");
             strafeLeftButton.classList.remove("active");
             keyEvent("d", "keydown");
             keyEvent("a", "keyup");
             
-        } else if ((movementX * 10) < (0 - window.innerHeight)) {
+        } else if ((movementX * 10) < (0 - unsafeWindow.innerHeight)) {
             strafeLeftButton.classList.add("active");
             strafeRightButton.classList.remove("active");
             keyEvent("a", "keydown");
@@ -365,18 +374,18 @@ function insertCanvasElements() {
     crouchButton.style.cssText = "left:10vh;bottom:10vh;"
     crouchButton.addEventListener("touchstart", function(e){
         keyEvent("shift", "keydown")
-        window.crouchLock = window.crouchLock ? null : false
+        unsafeWindow.crouchLock = unsafeWindow.crouchLock ? null : false
         crouchTimer = setTimeout(function(e) {
-            window.crouchLock = (window.crouchLock != null);
+            unsafeWindow.crouchLock = (unsafeWindow.crouchLock != null);
             crouchButton.classList.toggle('active');
         }, 1000);
     }, false);
 
     crouchButton.addEventListener("touchend", function(e) {
-        if(!window.crouchLock) {
+        if(!unsafeWindow.crouchLock) {
             keyEvent("shift", "keyup")
             crouchButton.classList.remove('active');
-            window.crouchLock = false
+            unsafeWindow.crouchLock = false
         }
         clearTimeout(crouchTimer);
     }, false);
@@ -404,11 +413,11 @@ function insertCanvasElements() {
     hiddenInput.addEventListener("input", function(e) {
     	e.preventDefault(true);
         let inputData = e.data == null ? "delete" : e.data.slice(-1);
-        console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
+        unsafeWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
 
-        window.lastKey = inputData
+        unsafeWindow.lastKey = inputData
         hiddenInput.value = " "; // We need a character to detect deleting
-        if(window.keyboardFix) {
+        if(unsafeWindow.keyboardFix) {
         	const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof
             if(sliceInputType== 'i') {
                 let isShift = (inputData.toLowerCase() != inputData);
@@ -428,12 +437,12 @@ function insertCanvasElements() {
         }
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
-        if(!(e.key && e.keyCode && e.which) && !window.keyboardFix) {
-        	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
-            window.keyboardFix = true;
-            if(window.lastKey) {
-            	keyEvent(window.lastKey, "keydown");
-            	keyEvent(window.lastKey, "keyup");
+        if(!(e.key && e.keyCode && e.which) && !unsafeWindow.keyboardFix) {
+        	unsafeWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
+            unsafeWindow.keyboardFix = true;
+            if(unsafeWindow.lastKey) {
+            	keyEvent(unsafeWindow.lastKey, "keydown");
+            	keyEvent(unsafeWindow.lastKey, "keyup");
             }
         }
     }, false);
@@ -475,18 +484,18 @@ function insertCanvasElements() {
     sprintButton.style.cssText = "right:0vh;bottom:10vh;"
     sprintButton.addEventListener("touchstart", function(e) {
         keyEvent("r", "keydown");
-        window.sprintLock = window.sprintLock ? null : false
+        unsafeWindow.sprintLock = unsafeWindow.sprintLock ? null : false
         sprintTimer = setTimeout(function(e) {
-            window.sprintLock = (window.sprintLock != null);
+            unsafeWindow.sprintLock = (unsafeWindow.sprintLock != null);
             sprintButton.classList.toggle('active');
         }, 1000);
     }, false);
 
     sprintButton.addEventListener("touchend", function(e) {
-        if(!window.sprintLock) {
+        if(!unsafeWindow.sprintLock) {
             keyEvent("r", "keyup");
             sprintButton.classList.remove('active');
-            window.sprintLock = false
+            unsafeWindow.sprintLock = false
         }
         clearTimeout(sprintTimer);
     }, false);
