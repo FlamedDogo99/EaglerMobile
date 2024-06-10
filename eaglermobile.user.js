@@ -16,6 +16,7 @@
 // IN THE FUTURE, JUST INJECT A SCRIPT TAG
 try {
 	unsafeWindow.console.log("UNSAFE WINDOW RAGGHHH")
+	alert("DANGER: This userscript is temporarily using unsafeWindow for testing purposes. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
 } catch {
 	Object.defineProperty(window, "unsafeWindow", {
 		value: window
@@ -404,6 +405,7 @@ function insertCanvasElements() {
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:10";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
+        e.stopImmediatePropagation();
     	e.preventDefault(true);
         let inputData = e.data == null ? "delete" : e.data.slice(-1);
         unsafeWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
