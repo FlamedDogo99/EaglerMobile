@@ -592,7 +592,6 @@ customStyle.textContent = `
     }
     html, body {
         height: -webkit-fill-available !important;
-        height: -moz-available !important;
         touch-action: pan-x pan-y;
     }
     .hide {
