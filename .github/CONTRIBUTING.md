@@ -3,7 +3,7 @@
 Whether you want to send us feedback, fix a problem, or something else, you are welcome to contribute! Our code is open source.
 
 
-Be sure to follow our [code of conduct](https://github.com/FlamedDogo99/EaglerMobile/blob/master/.github/CODE_OF_CONDUCT.md).
+Be sure to follow our [code of conduct](https://github.com/FlamedDogo99/EaglerMobile/blob/main/.github/CODE_OF_CONDUCT.md).
 
 ## Reporting bugs and suggesting features
 
