@@ -3,7 +3,7 @@
 
 
 [![](https://img.shields.io/github/v/release/FlamedDogo99/EaglerMobile?style=flat-square&logo=github&logoColor=white&label=GitHub&color=181717)](https://github.com/FlamedDogo99/EaglerMobile/releases)
-[![](https://img.shields.io/github/license/FlamedDogo99/EaglerMobile?style=flat-square)](https://github.com/FlamedDogo99/EaglerMobile/blob/master/LICENSE)
+[![](https://img.shields.io/github/license/FlamedDogo99/EaglerMobile?style=flat-square)](https://github.com/FlamedDogo99/EaglerMobile/blob/main/LICENSE)
 
 ## About
 
@@ -63,7 +63,7 @@ If you found a bug or have a suggestion [create an issue](https://github.com/Fla
 
 ### Code
 
-Before contributing code, please read our [contributing guidelines](https://github.com/FlamedDogo99/EaglerMobile/blob/master/.github/CONTRIBUTING.md).
+Before contributing code, please read our [contributing guidelines](https://github.com/FlamedDogo99/EaglerMobile/blob/main/.github/CONTRIBUTING.md).
 
 ### Features and documentation
 #### Fake API's
