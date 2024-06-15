@@ -28,9 +28,9 @@ Looking for a code editor? We recommend [Visual Studio Code](https://code.visual
 1. **If you have something in mind, it's best if you create or find an issue first (see above). That way, we can discuss it before you start a pull request.**
 2. [Fork this repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) if you haven't already.
 3. [Clone your fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo#cloning-your-forked-repository) and load it in your browser so you can make and test your changes.
-4. [Create a new branch](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#creating-a-branch-to-work-on), specifying `upstream/master` as the source branch:
+4. [Create a new branch](https://docs.github.com/en/get-started/quickstart/contributing-to-projects#creating-a-branch-to-work-on), specifying `upstream/main` as the source branch:
    ```shell
-   git checkout -b BRANCH-NAME upstream/master
+   git checkout -b BRANCH-NAME upstream/main
    ```
    Branching makes things easier later on if you have multiple pull requests open at once or ever want to contribute again. You can always delete a branch.
 5. Make and test your changes.
