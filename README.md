@@ -3,7 +3,7 @@
 
 
 [![](https://img.shields.io/github/v/release/FlamedDogo99/EaglerMobile?style=flat-square&logo=github&logoColor=white&label=GitHub&color=181717)](https://github.com/FlamedDogo99/EaglerMobile/releases)
-[![](https://img.shields.io/github/license/FlamedDogo99/EaglerMobile?style=flat-square)](https://github.com/FlamedDogo99/EaglerMobile/blob/master/LICENSE)
+[![](https://img.shields.io/github/license/FlamedDogo99/EaglerMobile?style=flat-square)](https://github.com/FlamedDogo99/EaglerMobile/blob/main/LICENSE)
 
 ## About
 
