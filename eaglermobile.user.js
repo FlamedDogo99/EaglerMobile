@@ -6,13 +6,14 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.3-alpha-5
+// @version         3.0.3
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // @grant           unsafeWindow
 // ==/UserScript==
 
 // This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, the use of unsafeWindow should be safe to use.
+// If someone knows a better way of doing this, please create an issue
 try {
 	unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
     Object.defineProperty(window, "clientWindow", {
@@ -46,27 +47,6 @@ clientWindow.blockNextInput = false;
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
-//TEMP REMOVE
-function logManager() {
-    var self = this;
-
-    self.init = function () {
-        clientWindow.console.log('logmanager initialized');
-        var old = clientWindow.console.log;
-        self.logger = document.getElementById('log');
-        clientWindow.console.log = function (message, options) {
-            if (typeof message == 'object') {
-                self.logger.innerHTML = (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />' + self.logger.innerHTML;
-            } else {
-                self.logger.innerHTML = message + '<br />' + self.logger.innerHTML;
-            }
-        }
-    }
-    self.toggleLogVisibility = function () {
-        return $(self.logger).toggle();
-    };
-}
-
 
 // better charCodeAt function
 String.prototype.toKeyCode = function() {
@@ -372,7 +352,7 @@ function insertCanvasElements() {
     crouchButton.addEventListener("touchstart", function(e){
         keyEvent("shift", "keydown")
         clientWindow.crouchLock = clientWindow.crouchLock ? null : false
-        crouchTimer = setTimeout(function(e) {
+        clientWindow.crouchTimer = setTimeout(function(e) {
             clientWindow.crouchLock = (clientWindow.crouchLock != null);
             crouchButton.classList.toggle('active');
         }, 1000);
@@ -384,7 +364,7 @@ function insertCanvasElements() {
             crouchButton.classList.remove('active');
             clientWindow.crouchLock = false
         }
-        clearTimeout(crouchTimer);
+        clearTimeout(clientWindow.crouchTimer);
     }, false);
     document.body.appendChild(crouchButton);
     let inventoryButton = createTouchButton("inventoryButton", "inGame");
@@ -402,10 +382,7 @@ function insertCanvasElements() {
     hiddenInput.id = "hiddenInput"
     hiddenInput.classList.add("inMenu")
     // We are hiding the text input behind button because opacity was causing problems.
-    //TEMP REVERT
-    //hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
-
-    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:10";
+    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
         e.stopImmediatePropagation();
@@ -413,9 +390,6 @@ function insertCanvasElements() {
         let inputData = e.data == null ? "delete" : e.data.slice(-1);
         if(!clientWindow.lastKey) { // If we get an event before any keys have been pressed, we know that setting the hiddenInput creates duplicate input events, so we can apply the fix
         	clientWindow.console.warn("Enabling blocking duplicate key events. Some functionality may be lost.")
-        	// TEMP REMOVE
-        	clientWindow.console.log("Enabling blocking duplicate key events. Some functionality may be lost.")
-        	// TEMP
         	clientWindow.inputFix = true;
         }
         clientWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
@@ -451,9 +425,6 @@ function insertCanvasElements() {
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
         if((e.keyCode == 229 || e.which == 229) && !clientWindow.keyboardFix) {
-        	// TEMP REMOVE
-			clientWindow.console.log("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
-			// TEMP
         	clientWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             clientWindow.keyboardFix = true;
             if(clientWindow.lastKey) {
@@ -501,7 +472,7 @@ function insertCanvasElements() {
     sprintButton.addEventListener("touchstart", function(e) {
         keyEvent("r", "keydown");
         clientWindow.sprintLock = clientWindow.sprintLock ? null : false
-        sprintTimer = setTimeout(function(e) {
+        clientWindow.sprintTimer = setTimeout(function(e) {
             clientWindow.sprintLock = (clientWindow.sprintLock != null);
             sprintButton.classList.toggle('active');
         }, 1000);
@@ -513,7 +484,7 @@ function insertCanvasElements() {
             sprintButton.classList.remove('active');
             clientWindow.sprintLock = false
         }
-        clearTimeout(sprintTimer);
+        clearTimeout(clientWindow.sprintTimer);
     }, false);
     document.body.appendChild(sprintButton);
     let pauseButton = createTouchButton("pauseButton", "inGame");
@@ -558,15 +529,6 @@ function insertCanvasElements() {
         keyEvent("3", "keyup");
     }, false);
     document.body.appendChild(coordinatesButton);
-    //TEMP REMOVE
-    var temp = document.createElement("div");
-    temp.id = "log";
-    temp.classList.add("log");
-    temp.style.cssText= "position: absolute; top: 8vh; margin: auto; left: 0vh; right: 0vh; height: auto; z-index:10; min-height:8vh; background:white";
-    temp.innerHtml = "Loading..."
-    document.body.appendChild(temp);
-    document.temp = new logManager();
-	document.temp.init();
 }
 // CSS for touch screen buttons, along with fixing iOS's issues with 100vh ignoring the naviagtion bar, and actually disabling zoom because safari ignores user-scalable=no :(
 let customStyle = document.createElement("style");
