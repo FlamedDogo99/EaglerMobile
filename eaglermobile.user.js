@@ -227,7 +227,7 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
     touchButton.classList.add(buttonDisplay);
     touchButton.classList.add("mobileControl");
     touchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
-    touchButton.addEventListener(“contextmenu”, function(e){e.preventDefault()});
+    touchButton.addEventListener("contextmenu", function(e){e.preventDefault()});
     return touchButton;
 }
 
