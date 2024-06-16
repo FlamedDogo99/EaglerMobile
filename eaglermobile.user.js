@@ -227,6 +227,7 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
     touchButton.classList.add(buttonDisplay);
     touchButton.classList.add("mobileControl");
     touchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
+    touchButton.addEventListener(“contextmenu”, function(e){e.preventDefault()});
     return touchButton;
 }
 
@@ -550,6 +551,7 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
+        pointer-events: none !important;
     }
     .mobileControl:active, .mobileControl.active {
         position: absolute; 
@@ -570,11 +572,19 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
-
+		pointer-events: none !important;
     }
-    html, body {
+    html, body, canvas {
         height: -webkit-fill-available !important;
         touch-action: pan-x pan-y;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
     }
     .hide {
         display: none;
