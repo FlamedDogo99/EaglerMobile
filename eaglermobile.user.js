@@ -6,11 +6,24 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.2
+// @version         3.0.3
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
+// @grant           unsafeWindow
 // ==/UserScript==
 
+// This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, the use of unsafeWindow should be safe to use.
+// If someone knows a better way of doing this, please create an issue
+try {
+    unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
+    Object.defineProperty(window, "clientWindow", {
+        value: unsafeWindow
+    });
+} catch {
+    Object.defineProperty(window, "clientWindow", {
+        value: window
+    });
+}
 
 function isMobile() {
     try {
@@ -23,17 +36,22 @@ function isMobile() {
 if(!isMobile()) {
     alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
 }
-window.keyboardEnabled = false;
-window.crouchLock = false;
-window.sprintLock = false;
-window.keyboardFix = false; // temporarily set to true until I can figure out whats going wrong with the event listener in charge of switching it
+
+clientWindow.keyboardEnabled = false;
+clientWindow.crouchLock = false;
+clientWindow.sprintLock = false;
+clientWindow.keyboardFix = false;
+clientWindow.inputFix = false;
+clientWindow.blockNextInput = false;
 // Used for changing touchmove events to mousemove events
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
+
 // better charCodeAt function
 String.prototype.toKeyCode = function() {
-    const keyCodeList = {"0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57, "backspace": 8, "tab": 9, "enter": 13, "shift": 16, "ctrl": 17, "alt": 18, "pause_break": 19, "caps_lock": 20, "escape": 27, " ": 32, "page_up": 33, "page_down": 34, "end": 35, "home": 36, "left_arrow": 37, "up_arrow": 38, "right_arrow": 39, "down_arrow": 40, "insert": 45, "delete": 46, "a": 65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72, "i": 73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80, "q": 81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89, "z": 90, "left_window_key": 91, "right_window_key": 92, "select_key": 93, "numpad_0": 96, "numpad_1": 97, "numpad_2": 98, "numpad_3": 99, "numpad_4": 100, "numpad_5": 101, "numpad_6": 102, "numpad_7": 103, "numpad_8": 104, "numpad_9": 105, "*": 106, "+": 107, "-": 109, ".": 110, "/": 111, "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117, "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123, "num_lock": 144, "scroll_lock": 145, ";": 186, "=": 187, ",": 188, "-": 189, ".": 190, "/": 191, "`": 192, "[": 219, "\\": 220, "]": 221, "\"": 222};
+        const keyCodeList = {"0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57, "backspace": 8, "tab": 9, "enter": 13, "shift": 16, "ctrl": 17, "alt": 18, "pause_break": 19, "caps_lock": 20, "escape": 27, " ": 32, "page_up": 33, "page_down": 34, "end": 35, "home": 36, "left_arrow": 37, "up_arrow": 38, "right_arrow": 39, "down_arrow": 40, "insert": 45, "delete": 46, "a": 65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72, "i": 73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80, "q": 81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89, "z": 90, "left_window_key": 91, "right_window_key": 92, "select_key": 93, "numpad_0": 96, "numpad_1": 97, "numpad_2": 98, "numpad_3": 99, "numpad_4": 100, "numpad_5": 101, "numpad_6": 102, "numpad_7": 103, "numpad_8": 104, "numpad_9": 105, "*": 106, "+": 107, "-": 109, ".": 110, "/": 111, "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117, "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123, "num_lock": 144, "scroll_lock": 145, ";": 186, "=": 187, ",": 188, "-": 189, ".": 190, "/": 191, "\u0060": 192, "[": 219, "\u005C": 220, "]": 221, "\u0022": 222};
+
     return keyCodeList[this];
 }
 // Ignores keydown events that don't have the isValid parameter set to true
@@ -42,7 +60,7 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
     value: function (type, fn, ...rest) {
         if(type == 'keydown') {
             _addEventListener.call(this, type, function(...args) {
-                if(!args[0].isValid && window.keyboardFix) {
+                if(!args[0].isValid && clientWindow.keyboardFix) {
                     return;
                 }
                 return fn.apply(this, args);
@@ -54,8 +72,8 @@ Object.defineProperty(EventTarget.prototype, "addEventListener", {
 });
 // Allows typing in #hiddenInput
 const _preventDefault = Event.prototype.preventDefault;
-Event.prototype.preventDefault = function() {
-  if(document.activeElement.id != "hiddenInput") {
+Event.prototype.preventDefault = function(shouldBypass) {
+  if(document.activeElement.id != "hiddenInput" || shouldBypass) {
       this._preventDefault =  _preventDefault;
       this._preventDefault();
   }
@@ -73,7 +91,7 @@ function keyEvent(name, state) {
         which: charCode
     });
     evt.isValid = true; // Disables fix for bad keyboard input
-    window.dispatchEvent(evt);
+    clientWindow.dispatchEvent(evt);
 }
 function mouseEvent(number, state, canvas) {
     canvas.dispatchEvent(new PointerEvent(state, {"button": number}))
@@ -90,56 +108,56 @@ function setButtonVisibility(pointerLocked) {
     inMenuStyle.disabled = !pointerLocked;  
 }
 // POINTERLOCK
-// When requestpointerlock is called, this dispatches an event, saves the requested element to window.fakelock, and unhides the touch controls
-window.fakelock = null;
+// When requestpointerlock is called, this dispatches an event, saves the requested element to clientWindow.fakelock, and unhides the touch controls
+clientWindow.fakelock = null;
 
 Object.defineProperty(Element.prototype, "requestPointerLock", {
-	value: function() {
-		window.fakelock = this
-		document.dispatchEvent(new Event('pointerlockchange'));
-		setButtonVisibility(true);
-		return true
-	}
+    value: function() {
+        clientWindow.fakelock = this
+        document.dispatchEvent(new Event('pointerlockchange'));
+        setButtonVisibility(true);
+        return true
+    }
 });
 
 
-// Makes pointerLockElement return window.fakelock
+// Makes pointerLockElement return clientWindow.fakelock
 Object.defineProperty(Document.prototype, "pointerLockElement", {
     get: function() {
-        return window.fakelock;
+        return clientWindow.fakelock;
     }
 });
 // When exitPointerLock is called, this dispatches an event, clears the
 Object.defineProperty(Document.prototype, "exitPointerLock", {
-	value: function() {
-		window.fakelock = null
-		document.dispatchEvent(new Event('pointerlockchange'));
-		setButtonVisibility(false);
-		return true
-	}
+    value: function() {
+        clientWindow.fakelock = null
+        document.dispatchEvent(new Event('pointerlockchange'));
+        setButtonVisibility(false);
+        return true
+    }
 });
 
 // FULLSCREEN
-window.fakefull = null;
+clientWindow.fakefull = null;
 // Stops the client from crashing when fullscreen is requested
 Object.defineProperty(Element.prototype, "requestFullscreen", {
-	value: function() {
-		window.fakefull = this
-		document.dispatchEvent(new Event('fullscreenchange'));
-		return true
-	}
+    value: function() {
+        clientWindow.fakefull = this
+        document.dispatchEvent(new Event('fullscreenchange'));
+        return true
+    }
 });
 Object.defineProperty(document, "fullscreenElement", {
     get: function() {
-        return window.fakefull;
+        return clientWindow.fakefull;
     }
 });
 Object.defineProperty(Document.prototype, "exitFullscreen", {
-	value: function() {
-		window.fakefull = null
-		document.dispatchEvent(new Event('fullscreenchange'));
-		return true
-	}
+    value: function() {
+        clientWindow.fakefull = null
+        document.dispatchEvent(new Event('fullscreenchange'));
+        return true
+    }
 });
 
 // FILE UPLOADING
@@ -150,16 +168,16 @@ document.createElement = function(type, ignore) {
     this._createElement = _createElement;
     var element = this._createElement(type);
     if(type == "input" && !ignore) {
-    	document.querySelectorAll('#fileUpload').forEach(e => e.parentNode.removeChild(e));
-    	element.id = "fileUpload";
-    	element.addEventListener('change', function(e) {
-    		element.hidden = true;
-    		element.style.display = "none";
-    	}, {passive: false, once: true});
-    	window.addEventListener('focus', function(e) {
+        document.querySelectorAll('#fileUpload').forEach(e => e.parentNode.removeChild(e));
+        element.id = "fileUpload";
+        element.addEventListener('change', function(e) {
+            element.hidden = true;
+            element.style.display = "none";
+        }, {passive: false, once: true});
+        clientWindow.addEventListener('focus', function(e) {
             setTimeout(() => {
                 element.hidden = true;
-    			element.style.display = "none";
+                element.style.display = "none";
             }, 300)
         }, { once: true })
         document.body.appendChild(element);
@@ -209,16 +227,17 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
     touchButton.classList.add(buttonDisplay);
     touchButton.classList.add("mobileControl");
     touchButton.addEventListener("touchmove", function(e){e.preventDefault()}, false);
+    touchButton.addEventListener(“contextmenu”, function(e){e.preventDefault()});
     return touchButton;
 }
 
 function toggleKeyboard() {
     const keyboardInput = document.getElementById('hiddenInput');
-    if (window.keyboardEnabled) {
-        window.keyboardEnabled = false;
+    if (clientWindow.keyboardEnabled) {
+        clientWindow.keyboardEnabled = false;
         keyboardInput.blur();
     } else {
-        window.keyboardEnabled = true;
+        clientWindow.keyboardEnabled = true;
         keyboardInput.select();
     }
 }
@@ -237,7 +256,7 @@ function insertCanvasElements() {
         }
         e.movementX = touch.pageX - previousTouchX;
         e.movementY = touch.pageY - previousTouchY;
-        var evt = window.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
+        var evt = clientWindow.fakelock ? new MouseEvent("mousemove", {movementX: e.movementX, movementY: e.movementY}) : new WheelEvent("wheel", {"wheelDeltaY": e.movementY});
         canvas.dispatchEvent(evt);
         previousTouchX = touch.pageX;
         previousTouchY = touch.pageY;
@@ -248,7 +267,7 @@ function insertCanvasElements() {
         previousTouchY = null; 
     }, false)
     //Updates button visibility on load
-    setButtonVisibility(window.fakelock != null);
+    setButtonVisibility(clientWindow.fakelock != null);
     // Adds all of the touch screen controls
     // Theres probably a better way to do this but this works for now
     let strafeRightButton = createTouchButton("strafeRightButton", "inGame", "div");
@@ -274,13 +293,13 @@ function insertCanvasElements() {
             startTouchX = touch.pageX;
         }
         let movementX = touch.pageX - startTouchX;
-        if((movementX * 10) > window.innerHeight) {
+        if((movementX * 10) > clientWindow.innerHeight) {
             strafeRightButton.classList.add("active");
             strafeLeftButton.classList.remove("active");
             keyEvent("d", "keydown");
             keyEvent("a", "keyup");
             
-        } else if ((movementX * 10) < (0 - window.innerHeight)) {
+        } else if ((movementX * 10) < (0 - clientWindow.innerHeight)) {
             strafeLeftButton.classList.add("active");
             strafeRightButton.classList.remove("active");
             keyEvent("a", "keydown");
@@ -333,20 +352,20 @@ function insertCanvasElements() {
     crouchButton.style.cssText = "left:10vh;bottom:10vh;"
     crouchButton.addEventListener("touchstart", function(e){
         keyEvent("shift", "keydown")
-        window.crouchLock = window.crouchLock ? null : false
-        crouchTimer = setTimeout(function(e) {
-            window.crouchLock = (window.crouchLock != null);
+        clientWindow.crouchLock = clientWindow.crouchLock ? null : false
+        clientWindow.crouchTimer = setTimeout(function(e) {
+            clientWindow.crouchLock = (clientWindow.crouchLock != null);
             crouchButton.classList.toggle('active');
         }, 1000);
     }, false);
 
     crouchButton.addEventListener("touchend", function(e) {
-        if(!window.crouchLock) {
+        if(!clientWindow.crouchLock) {
             keyEvent("shift", "keyup")
             crouchButton.classList.remove('active');
-            window.crouchLock = false
+            clientWindow.crouchLock = false
         }
-        clearTimeout(crouchTimer);
+        clearTimeout(clientWindow.crouchTimer);
     }, false);
     document.body.appendChild(crouchButton);
     let inventoryButton = createTouchButton("inventoryButton", "inGame");
@@ -367,34 +386,51 @@ function insertCanvasElements() {
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
-        let inputData = e.data ?? "delete"; // backspace makes null
-        window.lastKey = inputData
-        hiddenInput.value = " "; // We need a character to detect deleting
-        if(window.keyboardFix) {
-            if(e.inputType == 'insertText') {
-                let isShift = (inputData.toLowerCase() != inputData);
-                if(isShift) {
-                    keyEvent("shift", "keydown")
-                    keyEvent(inputData, "keydown");
-                    keyEvent(inputData, "keyup");
-                    keyEvent("shift", "keyup")
+        e.stopImmediatePropagation();
+        e.preventDefault(true);
+        let inputData = e.data == null ? "delete" : e.data.slice(-1);
+        if(!clientWindow.lastKey) { // If we get an event before any keys have been pressed, we know that setting the hiddenInput creates duplicate input events, so we can apply the fix
+            clientWindow.console.warn("Enabling blocking duplicate key events. Some functionality may be lost.")
+            clientWindow.inputFix = true;
+        }
+        clientWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
+
+        hiddenInput.value = " ";
+        if(clientWindow.keyboardFix) {
+            const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof, but its the easiest way to deal with Android
+            if(sliceInputType== 'i') {
+                const isDuplicate = (clientWindow.lastKey == inputData) && clientWindow.blockNextInput && clientWindow.inputFix;
+                if(isDuplicate) {
+                    clientWindow.blockNextInput = false;
                 } else {
-                    keyEvent(inputData, "keydown");
-                    keyEvent(inputData, "keyup");
+                    let isShift = (inputData.toLowerCase() != inputData);
+                    if(isShift) {
+                        keyEvent("shift", "keydown")
+                        keyEvent(inputData, "keydown");
+                        keyEvent(inputData, "keyup");
+                        keyEvent("shift", "keyup")
+                    } else {
+                        keyEvent(inputData, "keydown");
+                        keyEvent(inputData, "keyup");
+                    }
+                    clientWindow.blockNextInput = true;
                 }
-            } else if (e.inputType == 'deleteContentForward' || e.inputType == 'deleteContentBackward') {
-                keyEvent("backspace", "keydown")
-                keyEvent("backspace", "keyup")
+            } else if (sliceInputType == 'd') {
+                keyEvent("backspace", "keydown");
+                keyEvent("backspace", "keyup");
+                clientWindow.blockNextInput = false;
             }
         }
+        clientWindow.lastKey = inputData
+
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
-        if(!(e.key && e.keyCode && e.which) && !window.keyboardFix) {
-        	console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
-            window.keyboardFix = true;
-            if(window.lastKey) {
-            	keyEvent(window.lastKey, "keydown")
-            	keyEvent(window.lastKey, "keyup")
+        if((e.keyCode == 229 || e.which == 229) && !clientWindow.keyboardFix) {
+            clientWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
+            clientWindow.keyboardFix = true;
+            if(clientWindow.lastKey) {
+                keyEvent(clientWindow.lastKey, "keydown");
+                keyEvent(clientWindow.lastKey, "keyup");
             }
         }
     }, false);
@@ -436,20 +472,20 @@ function insertCanvasElements() {
     sprintButton.style.cssText = "right:0vh;bottom:10vh;"
     sprintButton.addEventListener("touchstart", function(e) {
         keyEvent("r", "keydown");
-        window.sprintLock = window.sprintLock ? null : false
-        sprintTimer = setTimeout(function(e) {
-            window.sprintLock = (window.sprintLock != null);
+        clientWindow.sprintLock = clientWindow.sprintLock ? null : false
+        clientWindow.sprintTimer = setTimeout(function(e) {
+            clientWindow.sprintLock = (clientWindow.sprintLock != null);
             sprintButton.classList.toggle('active');
         }, 1000);
     }, false);
 
     sprintButton.addEventListener("touchend", function(e) {
-        if(!window.sprintLock) {
+        if(!clientWindow.sprintLock) {
             keyEvent("r", "keyup");
             sprintButton.classList.remove('active');
-            window.sprintLock = false
+            clientWindow.sprintLock = false
         }
-        clearTimeout(sprintTimer);
+        clearTimeout(clientWindow.sprintTimer);
     }, false);
     document.body.appendChild(sprintButton);
     let pauseButton = createTouchButton("pauseButton", "inGame");
@@ -484,7 +520,7 @@ function insertCanvasElements() {
     }, false);
     document.body.appendChild(screenshotButton);
     let coordinatesButton = createTouchButton("coordinatesButton", "inGame");
-    coordinatesButton.style.cssText = "top: 0vh; margin: auto; left: 32vh; right: 0vh; width: 8vh; height: 8vh;"
+    coordinatesButton.style.cssText = ""
     coordinatesButton.addEventListener("touchstart", function(e) {
         keyEvent("f", "keydown");
         keyEvent("3", "keydown");
@@ -515,6 +551,7 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
+        pointer-events: none !important;
     }
     .mobileControl:active, .mobileControl.active {
         position: absolute; 
@@ -535,24 +572,32 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
-
+        pointer-events: none !important;
     }
-    html, body {
+    html, body, canvas {
         height: -webkit-fill-available !important;
         touch-action: pan-x pan-y;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
     }
     .hide {
         display: none;
     }
     #fileUpload {
-    	position: absolute;
-    	left: 0;
-    	right: 100vw;
-    	top: 0; 
-    	bottom: 100vh;
-    	width: 100vw;
-    	height: 100vh;
-    	background-color:rgba(255,255,255,0.5);
+        position: absolute;
+        left: 0;
+        right: 100vw;
+        top: 0; 
+        bottom: 100vh;
+        width: 100vw;
+        height: 100vh;
+        background-color:rgba(255,255,255,0.5);
     }
     .strafeRightButton {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAUGVYSWZNTQAqAAAACAACARIAAwAAAAEAAQAAh2kABAAAAAEAAAAmAAAAAAADoAEAAwAAAAEAAQAAoAIABAAAAAEAAAAWoAMABAAAAAEAAAAWAAAAAA78HUQAAAIwaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOkNvbG9yU3BhY2U+MTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KhDb0tQAAANRJREFUOBHVlMENwyAMRWnVHcqIjMEYzJAemlUidQh6aFZIApIt20FgUC/JxTb8/2wRgTFX+25i4E3UvSXyMDkIGeqc64VlfQgBfJnJwAC11oJIFWOMFJ6Zd+nshSZ/yXMCy0aj9aPH6L1HOc1xkSQqcAtCeJhWwSNAIA+dsaZhFawBwIQyVsFJLOGylkCom+ASHMy1WP151KidFDynieF6gkATSx42cYzf43o+TUnYajBNLyZh4LSzLB8mGC3YUczze5Rj1vXHvPTZTBt/e+hZl0sUO9qPMTJ6UlWFAAAAAElFTkSuQmCC");
