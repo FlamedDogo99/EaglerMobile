@@ -551,7 +551,6 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
-        pointer-events: none !important;
     }
     .mobileControl:active, .mobileControl.active {
         position: absolute; 
@@ -572,7 +571,6 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
-        pointer-events: none !important;
     }
     html, body, canvas {
         height: -webkit-fill-available !important;
