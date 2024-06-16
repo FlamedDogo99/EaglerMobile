@@ -15,14 +15,14 @@
 // This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, the use of unsafeWindow should be safe to use.
 // If someone knows a better way of doing this, please create an issue
 try {
-	unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
+    unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
     Object.defineProperty(window, "clientWindow", {
-		value: unsafeWindow
-	});
+        value: unsafeWindow
+    });
 } catch {
-	Object.defineProperty(window, "clientWindow", {
-		value: window
-	});
+    Object.defineProperty(window, "clientWindow", {
+        value: window
+    });
 }
 
 function isMobile() {
@@ -112,12 +112,12 @@ function setButtonVisibility(pointerLocked) {
 clientWindow.fakelock = null;
 
 Object.defineProperty(Element.prototype, "requestPointerLock", {
-	value: function() {
-		clientWindow.fakelock = this
-		document.dispatchEvent(new Event('pointerlockchange'));
-		setButtonVisibility(true);
-		return true
-	}
+    value: function() {
+        clientWindow.fakelock = this
+        document.dispatchEvent(new Event('pointerlockchange'));
+        setButtonVisibility(true);
+        return true
+    }
 });
 
 
@@ -129,23 +129,23 @@ Object.defineProperty(Document.prototype, "pointerLockElement", {
 });
 // When exitPointerLock is called, this dispatches an event, clears the
 Object.defineProperty(Document.prototype, "exitPointerLock", {
-	value: function() {
-		clientWindow.fakelock = null
-		document.dispatchEvent(new Event('pointerlockchange'));
-		setButtonVisibility(false);
-		return true
-	}
+    value: function() {
+        clientWindow.fakelock = null
+        document.dispatchEvent(new Event('pointerlockchange'));
+        setButtonVisibility(false);
+        return true
+    }
 });
 
 // FULLSCREEN
 clientWindow.fakefull = null;
 // Stops the client from crashing when fullscreen is requested
 Object.defineProperty(Element.prototype, "requestFullscreen", {
-	value: function() {
-		clientWindow.fakefull = this
-		document.dispatchEvent(new Event('fullscreenchange'));
-		return true
-	}
+    value: function() {
+        clientWindow.fakefull = this
+        document.dispatchEvent(new Event('fullscreenchange'));
+        return true
+    }
 });
 Object.defineProperty(document, "fullscreenElement", {
     get: function() {
@@ -153,11 +153,11 @@ Object.defineProperty(document, "fullscreenElement", {
     }
 });
 Object.defineProperty(Document.prototype, "exitFullscreen", {
-	value: function() {
-		clientWindow.fakefull = null
-		document.dispatchEvent(new Event('fullscreenchange'));
-		return true
-	}
+    value: function() {
+        clientWindow.fakefull = null
+        document.dispatchEvent(new Event('fullscreenchange'));
+        return true
+    }
 });
 
 // FILE UPLOADING
@@ -168,16 +168,16 @@ document.createElement = function(type, ignore) {
     this._createElement = _createElement;
     var element = this._createElement(type);
     if(type == "input" && !ignore) {
-    	document.querySelectorAll('#fileUpload').forEach(e => e.parentNode.removeChild(e));
-    	element.id = "fileUpload";
-    	element.addEventListener('change', function(e) {
-    		element.hidden = true;
-    		element.style.display = "none";
-    	}, {passive: false, once: true});
-    	clientWindow.addEventListener('focus', function(e) {
+        document.querySelectorAll('#fileUpload').forEach(e => e.parentNode.removeChild(e));
+        element.id = "fileUpload";
+        element.addEventListener('change', function(e) {
+            element.hidden = true;
+            element.style.display = "none";
+        }, {passive: false, once: true});
+        clientWindow.addEventListener('focus', function(e) {
             setTimeout(() => {
                 element.hidden = true;
-    			element.style.display = "none";
+                element.style.display = "none";
             }, 300)
         }, { once: true })
         document.body.appendChild(element);
@@ -387,34 +387,34 @@ function insertCanvasElements() {
     hiddenInput.value = " " //Allows delete to be detected before input is changed
     hiddenInput.addEventListener("input", function(e) {
         e.stopImmediatePropagation();
-    	e.preventDefault(true);
+        e.preventDefault(true);
         let inputData = e.data == null ? "delete" : e.data.slice(-1);
         if(!clientWindow.lastKey) { // If we get an event before any keys have been pressed, we know that setting the hiddenInput creates duplicate input events, so we can apply the fix
-        	clientWindow.console.warn("Enabling blocking duplicate key events. Some functionality may be lost.")
-        	clientWindow.inputFix = true;
+            clientWindow.console.warn("Enabling blocking duplicate key events. Some functionality may be lost.")
+            clientWindow.inputFix = true;
         }
         clientWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
 
         hiddenInput.value = " ";
         if(clientWindow.keyboardFix) {
-        	const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof, but its the easiest way to deal with Android
+            const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof, but its the easiest way to deal with Android
             if(sliceInputType== 'i') {
-				const isDuplicate = (clientWindow.lastKey == inputData) && clientWindow.blockNextInput && clientWindow.inputFix;
-				if(isDuplicate) {
-            		clientWindow.blockNextInput = false;
-            	} else {
-					let isShift = (inputData.toLowerCase() != inputData);
-					if(isShift) {
-						keyEvent("shift", "keydown")
-						keyEvent(inputData, "keydown");
-						keyEvent(inputData, "keyup");
-						keyEvent("shift", "keyup")
-					} else {
-						keyEvent(inputData, "keydown");
-						keyEvent(inputData, "keyup");
-					}
-					clientWindow.blockNextInput = true;
-				}
+                const isDuplicate = (clientWindow.lastKey == inputData) && clientWindow.blockNextInput && clientWindow.inputFix;
+                if(isDuplicate) {
+                    clientWindow.blockNextInput = false;
+                } else {
+                    let isShift = (inputData.toLowerCase() != inputData);
+                    if(isShift) {
+                        keyEvent("shift", "keydown")
+                        keyEvent(inputData, "keydown");
+                        keyEvent(inputData, "keyup");
+                        keyEvent("shift", "keyup")
+                    } else {
+                        keyEvent(inputData, "keydown");
+                        keyEvent(inputData, "keyup");
+                    }
+                    clientWindow.blockNextInput = true;
+                }
             } else if (sliceInputType == 'd') {
                 keyEvent("backspace", "keydown");
                 keyEvent("backspace", "keyup");
@@ -426,11 +426,11 @@ function insertCanvasElements() {
     }, false);
     hiddenInput.addEventListener("keydown", function(e) {
         if((e.keyCode == 229 || e.which == 229) && !clientWindow.keyboardFix) {
-        	clientWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
+            clientWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             clientWindow.keyboardFix = true;
             if(clientWindow.lastKey) {
-            	keyEvent(clientWindow.lastKey, "keydown");
-            	keyEvent(clientWindow.lastKey, "keyup");
+                keyEvent(clientWindow.lastKey, "keydown");
+                keyEvent(clientWindow.lastKey, "keyup");
             }
         }
     }, false);
@@ -572,7 +572,7 @@ customStyle.textContent = `
         outline:none;
         box-shadow: none;
         border: none;
-		pointer-events: none !important;
+        pointer-events: none !important;
     }
     html, body, canvas {
         height: -webkit-fill-available !important;
@@ -590,14 +590,14 @@ customStyle.textContent = `
         display: none;
     }
     #fileUpload {
-    	position: absolute;
-    	left: 0;
-    	right: 100vw;
-    	top: 0; 
-    	bottom: 100vh;
-    	width: 100vw;
-    	height: 100vh;
-    	background-color:rgba(255,255,255,0.5);
+        position: absolute;
+        left: 0;
+        right: 100vw;
+        top: 0; 
+        bottom: 100vh;
+        width: 100vw;
+        height: 100vh;
+        background-color:rgba(255,255,255,0.5);
     }
     .strafeRightButton {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAUGVYSWZNTQAqAAAACAACARIAAwAAAAEAAQAAh2kABAAAAAEAAAAmAAAAAAADoAEAAwAAAAEAAQAAoAIABAAAAAEAAAAWoAMABAAAAAEAAAAWAAAAAA78HUQAAAIwaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA2LjAuMCI+CiAgIDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CiAgICAgIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDxleGlmOlBpeGVsWURpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFlEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOlBpeGVsWERpbWVuc2lvbj4yMjwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOkNvbG9yU3BhY2U+MTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KhDb0tQAAANRJREFUOBHVlMENwyAMRWnVHcqIjMEYzJAemlUidQh6aFZIApIt20FgUC/JxTb8/2wRgTFX+25i4E3UvSXyMDkIGeqc64VlfQgBfJnJwAC11oJIFWOMFJ6Zd+nshSZ/yXMCy0aj9aPH6L1HOc1xkSQqcAtCeJhWwSNAIA+dsaZhFawBwIQyVsFJLOGylkCom+ASHMy1WP151KidFDynieF6gkATSx42cYzf43o+TUnYajBNLyZh4LSzLB8mGC3YUczze5Rj1vXHvPTZTBt/e+hZl0sUO9qPMTJ6UlWFAAAAAElFTkSuQmCC");
