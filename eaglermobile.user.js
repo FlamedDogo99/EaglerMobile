@@ -520,7 +520,7 @@ function insertCanvasElements() {
     }, false);
     document.body.appendChild(screenshotButton);
     let coordinatesButton = createTouchButton("coordinatesButton", "inGame");
-    coordinatesButton.style.cssText = ""
+    coordinatesButton.style.cssText = "top: 0vh; margin: auto; left: 32vh; right: 0vh; width: 8vh; height: 8vh;"
     coordinatesButton.addEventListener("touchstart", function(e) {
         keyEvent("f", "keydown");
         keyEvent("3", "keydown");
