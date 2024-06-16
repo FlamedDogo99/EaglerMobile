@@ -6,13 +6,13 @@
 // @downloadURL     https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @license         Apache License 2.0 - http://www.apache.org/licenses/
 // @match           https://eaglercraft.com/mc/*
-// @version         3.0.3
+// @version         3.0.4
 // @updateURL       https://raw.githubusercontent.com/FlamedDogo99/EaglerMobile/main/eaglermobile.user.js
 // @run-at          document-start
 // @grant           unsafeWindow
 // ==/UserScript==
 
-// This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, the use of unsafeWindow should be safe to use.
+// This is generally a bad practice, but we need to run scripts in the main context before the DOM loads. Because we are only matching eaglercraft.com, unsafeWindow should be safe to use.
 // If someone knows a better way of doing this, please create an issue
 try {
     unsafeWindow.console.warn("DANGER: This userscript is  using unsafeWindow. Unsafe websites could potentially use this to gain access to data and other content that the browser normally wouldn't allow!")
@@ -24,7 +24,7 @@ try {
         value: window
     });
 }
-
+// To-do: remove the mobile check is implement the dynamic enabling and disabling of individual features
 function isMobile() {
     try {
         document.createEvent("TouchEvent");
@@ -37,43 +37,44 @@ if(!isMobile()) {
     alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
 }
 
-clientWindow.keyboardEnabled = false;
-clientWindow.crouchLock = false;
-clientWindow.sprintLock = false;
-clientWindow.keyboardFix = false;
-clientWindow.inputFix = false;
-clientWindow.blockNextInput = false;
+clientWindow.crouchLock = false; // Used for crouch mobile control
+clientWindow.sprintLock = false; // Used for sprint mobile control
+clientWindow.keyboardFix = false; // keyboardFix ? "Standard Keyboard" : "Compatibility Mode"
+clientWindow.inputFix = false; // If true, Duplicate Mode
+clientWindow.blockNextInput = false; // Used for Duplicate Mode 
+clientWindow.hiddenInputFocused = false;
+
 // Used for changing touchmove events to mousemove events
 var previousTouchX = null;
 var previousTouchY = null;
 var startTouchX = null;
 
-// better charCodeAt function
+// charCodeAt is designed for unicode characters, and doesn't match the behavior of the keyCodes used by KeyboardEvents, thus necessitating this function
 String.prototype.toKeyCode = function() {
         const keyCodeList = {"0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57, "backspace": 8, "tab": 9, "enter": 13, "shift": 16, "ctrl": 17, "alt": 18, "pause_break": 19, "caps_lock": 20, "escape": 27, " ": 32, "page_up": 33, "page_down": 34, "end": 35, "home": 36, "left_arrow": 37, "up_arrow": 38, "right_arrow": 39, "down_arrow": 40, "insert": 45, "delete": 46, "a": 65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72, "i": 73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80, "q": 81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89, "z": 90, "left_window_key": 91, "right_window_key": 92, "select_key": 93, "numpad_0": 96, "numpad_1": 97, "numpad_2": 98, "numpad_3": 99, "numpad_4": 100, "numpad_5": 101, "numpad_6": 102, "numpad_7": 103, "numpad_8": 104, "numpad_9": 105, "*": 106, "+": 107, "-": 109, ".": 110, "/": 111, "f1": 112, "f2": 113, "f3": 114, "f4": 115, "f5": 116, "f6": 117, "f7": 118, "f8": 119, "f9": 120, "f10": 121, "f11": 122, "f12": 123, "num_lock": 144, "scroll_lock": 145, ";": 186, "=": 187, ",": 188, "-": 189, ".": 190, "/": 191, "\u0060": 192, "[": 219, "\u005C": 220, "]": 221, "\u0022": 222};
-
     return keyCodeList[this];
 }
-// Ignores keydown events that don't have the isValid parameter set to true
+// Overrides the addEventListener behavior to all code injection on keydown event listeners. This function has thrown TypeErrors on some Android devices because fn is not recognized as a function
+// This is used by Compatibility Mode to block invalid keyEvents
 const _addEventListener = EventTarget.prototype.addEventListener;
 Object.defineProperty(EventTarget.prototype, "addEventListener", {
     value: function (type, fn, ...rest) {
-        if(type == 'keydown') {
+        if(type == 'keydown') { // Check if a keydown event is being added
             _addEventListener.call(this, type, function(...args) {
-                if(!args[0].isValid && clientWindow.keyboardFix) {
-                    return;
+                if(!args[0].isValid && clientWindow.keyboardFix) { // Inject check for isValid flag and Compatibility Mode
+                    return; // When we are in Compatibility Mode, standard key presses will be ignored
                 }
-                return fn.apply(this, args);
+                return fn.apply(this, args); // Appends the rest of the function specified by addEventListener
             }, ...rest);
-        } else {
+        } else { // If it's not a keydown event, behave like normal
             _addEventListener.call(this, type, fn, ...rest);
         }
     }
 });
-// Allows typing in #hiddenInput
+// Overrides preventDefault, because on some (Android) devices you couldn't type into hiddenInput
 const _preventDefault = Event.prototype.preventDefault;
 Event.prototype.preventDefault = function(shouldBypass) {
-  if(document.activeElement.id != "hiddenInput" || shouldBypass) {
+  if(document.activeElement.id != "hiddenInput" || shouldBypass) { // activeElement is what element is currently focused
       this._preventDefault =  _preventDefault;
       this._preventDefault();
   }
@@ -203,7 +204,7 @@ inMenuStyle.textContent = `
 document.documentElement.appendChild(inMenuStyle);
 
 
-// The canvas is created by the client after it finishes unzipping and loading. When the canvas is created, this applies any necessary event listeners
+// The canvas is created by the client after it finishes unzipping and loading. When the canvas is created, this applies any necessary event listeners and creates buttons
 function waitForElm(selector) {
     return new Promise(resolve => {
         if (document.querySelector(selector)) {
@@ -231,16 +232,6 @@ function createTouchButton(buttonClass, buttonDisplay, elementName) {
     return touchButton;
 }
 
-function toggleKeyboard() {
-    const keyboardInput = document.getElementById('hiddenInput');
-    if (clientWindow.keyboardEnabled) {
-        clientWindow.keyboardEnabled = false;
-        keyboardInput.blur();
-    } else {
-        clientWindow.keyboardEnabled = true;
-        keyboardInput.select();
-    }
-}
 
 waitForElm('canvas').then(() => {insertCanvasElements()});
 function insertCanvasElements() {    
@@ -378,67 +369,105 @@ function insertCanvasElements() {
     exitButton.addEventListener("touchstart", function(e){keyEvent("`", "keydown")}, false);
     exitButton.addEventListener("touchend", function(e){keyEvent("`", "keyup")}, false);
     document.body.appendChild(exitButton);
-    // input for keyboard button
+    // ---Input Handling---
+    // This code is a mess, specifically because Android is so so SO inconsistent with how it handles the keyboard
+    // Some keyboards dispatch key events, some directly append text, and none of them meet the most basic standards supported by most other devices
+    // This mess is my attempt at dealing with that, and it will most likely only ever be triggered by Android
+    // 
+    // It has three main modes.
+    // 1) Standard keyboard mode:
+    // This mode keeps the hiddenInput empty, saves the last key press, and on every keypress checks if it the keys are being pressed incorrectly.
+    // If there is a problem, it switches to compatibility mode, using beforeinput and input events instead of keydown and keyup
+    // 2) Compatibility mode:
+    // This most is most likely going to be used by Android, because Android only every dispatches keyCode 229 for any keypress
+    // When we enter this mode, we grab the last known key press and redispatch it, and programatically dispatch key events by reading e.inputType and e.data from beforeinput
+    // Unfortunately, Android is weird with this as well. Sometimes it only dispatches insertCompositionText events, and sometimes it gives the correct inputTypes as well
+    // Additionally, programmatically setting the input's text contents (BECAUSE ANDROID IGNORES PREVENTDEFAULT AGHHHHH) dispatches a repeat of the previous event
+    // Luckily, we can check if this happens when we first create the input, which necessitates the third mode:
+    // 3) Duplicate mode:
+    // If we are getting duplicate inputs, this mode ignores every other input if it matches the state saved in clientWindow.previousKey
+    // If users make it to this mode and still are having issues, it may be best just to remove support for their device
+    // ---Input Handling--- 
     let hiddenInput = document.createElement('input', true);
     hiddenInput.id = "hiddenInput"
     hiddenInput.classList.add("inMenu")
-    // We are hiding the text input behind button because opacity was causing problems.
-    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index:-10;color: transparent;text-shadow: 0 0 0 black;";
-    hiddenInput.value = " " //Allows delete to be detected before input is changed
-    hiddenInput.addEventListener("input", function(e) {
-        e.stopImmediatePropagation();
-        e.preventDefault(true);
-        let inputData = e.data == null ? "delete" : e.data.slice(-1);
-        if(!clientWindow.lastKey) { // If we get an event before any keys have been pressed, we know that setting the hiddenInput creates duplicate input events, so we can apply the fix
+    hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index: -10;color: transparent;text-shadow: 0 0 0 black;"; // We hide the input behind a key because display: none and opacity:0 causes issues
+    hiddenInput.addEventListener("beforeinput", function(e) { // For some reason beforeinput doesn't have the same deletion problems that input has on Android
+        e.stopImmediatePropagation(); // Android ignores this and the prevent default, so this will probably be removed in the future
+        e.preventDefault(true); // We pass a value because we've hijacked the prevent default function to have a "should bypass" boolean value
+        let inputData = (e.inputType == "insertLineBreak") ? "return" : (e.data == null ? "delete" : e.data.slice(-1)); // Saves the last key press. 
+        if(!clientWindow.lastKey) { // When we first set hiddenInput's text contents to " " we can use this to check if Duplicate Mode is needed
             clientWindow.console.warn("Enabling blocking duplicate key events. Some functionality may be lost.")
             clientWindow.inputFix = true;
         }
-        clientWindow.console.log(`Received input by ${e.inputType}: ${e.data} -> ${inputData}`);
-
-        hiddenInput.value = " ";
         if(clientWindow.keyboardFix) {
-            const sliceInputType = e.inputType.slice(0,1); // This is a really dumb way to do this because it's not future-proof, but its the easiest way to deal with Android
-            if(sliceInputType== 'i') {
-                const isDuplicate = (clientWindow.lastKey == inputData) && clientWindow.blockNextInput && clientWindow.inputFix;
-                if(isDuplicate) {
-                    clientWindow.blockNextInput = false;
-                } else {
-                    let isShift = (inputData.toLowerCase() != inputData);
-                    if(isShift) {
-                        keyEvent("shift", "keydown")
-                        keyEvent(inputData, "keydown");
-                        keyEvent(inputData, "keyup");
-                        keyEvent("shift", "keyup")
+            if(e.inputType == "insertLineBreak") { // Detects return key press
+                keyEvent("enter", "keydown");
+                keyEvent("enter", "keyup");
+            } else {
+                const sliceInputType = e.inputType.slice(0,1); // Android doesn't constiently dispatch the correct inputType, but most of them either start with i for insert or d for delete, so this dumb solution should be good enough.
+                if(sliceInputType== 'i' && e.data) { // Android sometimes always dispatches insertCompositionText inputTypes, so checking that e.data isn't null is necessary
+                    const isDuplicate = (clientWindow.lastKey == inputData) && clientWindow.blockNextInput && clientWindow.inputFix;
+                    if(isDuplicate) { // If our key press matches the last unblocked key press and we are in duplicaye mode, ignore the input
+                        clientWindow.blockNextInput = false;
                     } else {
-                        keyEvent(inputData, "keydown");
-                        keyEvent(inputData, "keyup");
+                        let isShift = (inputData.toLowerCase() != inputData);
+                        if(isShift) { // The Eaglerclient only uses e.key, e.keyCode and e.which, so we have to dispatch the shift key event separately  
+                            keyEvent("shift", "keydown");
+                            keyEvent(inputData, "keydown");
+                            keyEvent(inputData, "keyup");
+                            keyEvent("shift", "keyup");
+                        } else {
+                            keyEvent(inputData, "keydown");
+                            keyEvent(inputData, "keyup");
+                        }
+                        clientWindow.blockNextInput = true;
                     }
-                    clientWindow.blockNextInput = true;
+                } else if (sliceInputType == 'd' || !e.data) {
+                    keyEvent("backspace", "keydown");
+                    keyEvent("backspace", "keyup");
+                    clientWindow.blockNextInput = false; // If we delete a character, there couldn't be a duplicate of the previous key press
                 }
-            } else if (sliceInputType == 'd') {
-                keyEvent("backspace", "keydown");
-                keyEvent("backspace", "keyup");
-                clientWindow.blockNextInput = false;
             }
         }
-        clientWindow.lastKey = inputData
+        clientWindow.lastKey = inputData // Saves the last key pressed
+        hiddenInput.value = " " //This previously allowed us to have a character to delete, but beforeinput doesn't require this. This does allow us to check wether Duplicate Mode is necessary though
+
 
     }, false);
-    hiddenInput.addEventListener("keydown", function(e) {
+    hiddenInput.addEventListener("input", function(e) { // Since we are using beforeInput for input detection, setting the text contents of hiddenInput causes weird behavior, so we use input instead
+        if (hiddenInput.value != " ") { // Avoid updating it if not needed so Duplicate Mode doesn't throw a fit
+            hiddenInput.value = " ";
+        }
+    }, false);
+    hiddenInput.addEventListener("keydown", function(e) { // Enables Compatibility Mode if we receive an invalid key press event
         if((e.keyCode == 229 || e.which == 229) && !clientWindow.keyboardFix) {
             clientWindow.console.warn("Switching from keydown to input events due to invalid KeyboardEvent. Some functionality will be lost.")
             clientWindow.keyboardFix = true;
-            if(clientWindow.lastKey) {
+            if(clientWindow.lastKey) { // Resend the last saved key press (which is being tracked by the beforeinput event listener) so the transition to Compatibility Mode isn't noticeable
                 keyEvent(clientWindow.lastKey, "keydown");
                 keyEvent(clientWindow.lastKey, "keyup");
             }
         }
     }, false);
+    hiddenInput.addEventListener("blur", function(e) {
+        clientWindow.hiddenInputFocused = false;
+    });
     document.body.appendChild(hiddenInput);
     let keyboardButton = createTouchButton("keyboardButton", "inMenu");
     keyboardButton.style.cssText = "top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;"
-    keyboardButton.addEventListener("touchstart", function(e){e.preventDefault();hiddenInput.blur()}, false);
-    keyboardButton.addEventListener("touchend", function(e){e.preventDefault();toggleKeyboard()}, false);
+    keyboardButton.addEventListener("touchstart", function(e){
+        e.preventDefault();
+    }, false);
+    keyboardButton.addEventListener("touchend", function(e){
+        e.preventDefault();
+        if(clientWindow.hiddenInputFocused) {
+            hiddenInput.blur()
+        } else {
+            hiddenInput.select()
+            clientWindow.hiddenInputFocused = true;
+        }
+    }, false);
     document.body.appendChild(keyboardButton);
     let placeButton = createTouchButton("placeButton", "inGame");
     placeButton.style.cssText = "right:0vh;bottom:20vh;"
@@ -495,7 +524,7 @@ function insertCanvasElements() {
     document.body.appendChild(pauseButton);
     let chatButton = createTouchButton("chatButton", "inGame");
     chatButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 16vh; width: 8vh; height: 8vh;"
-    chatButton.addEventListener("touchstart", function(e){keyEvent("t", "keydown")}, false);
+    chatButton.addEventListener("touchstart", function(e){keyEvent("t", "keydown")}, false); // For some reason dispatching a keyup event for this closes the chat, which is really weird
     document.body.appendChild(chatButton);
     let perspectiveButton = createTouchButton("perspectiveButton", "inGame");
     perspectiveButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right: 0vh; width: 8vh; height: 8vh;"
@@ -573,6 +602,7 @@ customStyle.textContent = `
         border: none;
     }
     html, body, canvas {
+        height: 100svh !important;
         height: -webkit-fill-available !important;
         touch-action: pan-x pan-y;
         -webkit-touch-callout: none;
