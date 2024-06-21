@@ -694,12 +694,44 @@ customStyle.textContent = `
     .coordinatesButton.active, .coordinatesButton:active {
         background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAFy2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczpwaG90b3Nob3A9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGhvdG9zaG9wLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpDb2xvclNwYWNlPSIxIgogICBleGlmOlBpeGVsWERpbWVuc2lvbj0iMTgiCiAgIGV4aWY6UGl4ZWxZRGltZW5zaW9uPSIxOCIKICAgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIKICAgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIgogICB0aWZmOkltYWdlTGVuZ3RoPSIxOCIKICAgdGlmZjpJbWFnZVdpZHRoPSIxOCIKICAgdGlmZjpSZXNvbHV0aW9uVW5pdD0iMiIKICAgdGlmZjpYUmVzb2x1dGlvbj0iNzIvMSIKICAgdGlmZjpZUmVzb2x1dGlvbj0iNzIvMSIKICAgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyNC0wNi0wMVQxOTo0Njo0NS0wNTowMCIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjQtMDYtMDFUMTk6NDY6NDUtMDU6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgeG1wTU06YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgeG1wTU06c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgUGhvdG8gMiAyLjUuMSIKICAgICAgeG1wTU06d2hlbj0iMjAyNC0wNS0zMVQwOTozMzoxNi0wNTowMCIvPgogICAgIDxyZGY6bGkKICAgICAgeG1wTU06YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgeG1wTU06c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgUGhvdG8gMiAyLjUuMSIKICAgICAgeG1wTU06d2hlbj0iMjAyNC0wNS0zMVQwOTo1MTo0My0wNTowMCIvPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgUGhvdG8gMiAyLjUuMSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyNC0wNi0wMVQxOTo0Njo0NS0wNTowMCIvPgogICAgPC9yZGY6U2VxPgogICA8L3htcE1NOkhpc3Rvcnk+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgo8P3hwYWNrZXQgZW5kPSJyIj8+3ivAWwAAAYBpQ0NQc1JHQiBJRUM2MTk2Ni0yLjEAACiRdZHPK0RRFMc/ZvyK0SgWFhaThpWRHzWxUUZCSRqjDDYz1/xQM+P13pNkq2wVJTZ+LfgL2CprpYiUrGdNbJie8+ZNjWTO7Z77ud97zunec8EVyaisUd0L2Zyph8dDvvnogq8uTy1VuKnHH1OGNjIzM0VF+3yUWLH7gF2rcty/1ricMBRU1QsPK003hSeEp9ZNzeY94VaVji0LXwh363JB4Qdbjzuctznl8LfNeiQ8Cq5mYV/qF8d/sUrrWWF5Of5sZk2V7mO/xJPIzc3K2iGzHYMw44TwMckYowTpY0h8kAD99MiOCvm9xfxpViVXidfYQGeFFGlMukVdk+oJWZOiJ2Rk2LD7/7evRnKg36nuCUHNq2W9d0LdLhR2LOvrxLIKp+B+getcOX/1GAY/RN8pa/4j8G7B5U1Zi+/D1Ta0PWsxPVaU3DJdySS8nUNTFFruoGHR6VnpnLMniGzKV93CwSF0Sbx36QfytWex+zpwggAAAAlwSFlzAAALEwAACxMBAJqcGAAAAM9JREFUOI2t1DEKwjAYhuG34mF6ja4iUicDIjjXScSDFIReIc4ijr1Cu/USJkeoi6lVm9TUfksgJA/fX0pgpATPtf7XCQwipRwkCCGaRrVBqqryQsIwbLCJ2fRFPu9MHOc6czzsyfP8a3/qAwDM5guiKPKHDABwud6s55yjFUX5hmRZ1tmmFwJYb7bOJibW0dptpDyjtbK2cUImWisAJ2KFiqL8GXBCfWN0pfnY5nf3adG+EwB1HC8RYuXVwCRJdih1f42WpqdBULsRjPAePQBKokYW6r1DQwAAAABJRU5ErkJggg==");
     }
+
+    #mobileSettingsTab {
+        position: absolute;
+        width: auto;
+        border: 1px solid #f00;
+        color: #fff;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    #mobileSettingsTab > * {
+        width: min-content;
+    }
+
+    #mobileSettingsTab > button {
+        pointer-events: all;
+    }
+
     `;
 document.documentElement.appendChild(customStyle);
 
 window.ResponsiveScaleFactor = 1;
 
 ModAPI.addEventListener("load", () => {
+    window.settingsTab = false;
+    let mobileSettingsTab = document.createElement('div');
+    mobileSettingsTab.setAttribute('id', 'mobileSettingsTab');
+    mobileSettingsTab.style.display = "none";
+    document.body.appendChild(mobileSettingsTab);
+
+
+    window.mouseDown = 0;
+    document.body.onmousedown = function() { 
+        mouseDown = true;
+    }
+    document.body.onmouseup = function() {
+        mouseDown = false;
+    }
     document.getElementsByClassName('exitButton')[0].style.display = "none";
     document.getElementsByClassName('secondKeyboardButton')[0].style.display = "none";
     document.getElementsByClassName('keyboardButton')[0].addEventListener("click", (event) => {
@@ -914,8 +946,30 @@ ModAPI.addEventListener("frame", () => {
             }
         })
 
+        window.settingsTab = true;
+
         ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[0].$xPosition0 = (ModAPI.mcinstance.$currentScreen.$width8/2) - (ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[0].$width14/2) // center "Done" button
         ModAPI.mcinstance.$currentScreen.$keyBindingList.$top = inputHeight;
         ModAPI.mcinstance.$currentScreen.$screenTitle0.$characters.data = Encodeuint8arr('Mobile Controls');
+    }
+
+    if (getInterfaceName() !== "GuiControls") {
+        window.settingsTab = false;
+        document.getElementById('mobileSettingsTab').style.display = "none";
+    }
+
+    if (settingsTab === true && document.getElementById('mobileSettingsTab').style.display === "none") {
+        let mobileSettingsTab = document.getElementById('mobileSettingsTab')
+        mobileSettingsTab.style.display = "unset";
+        mobileSettingsTab.style.top = inputHeight * ScaledResolution+"px";
+        mobileSettingsTab.style.left = (ModAPI.mcinstance.$currentScreen.$width8 - ModAPI.mcinstance.$currentScreen.$keyBindingList.$getScrollBarX()) * ScaledResolution+"px";
+        mobileSettingsTab.style.right = (ModAPI.mcinstance.$currentScreen.$width8 - ModAPI.mcinstance.$currentScreen.$keyBindingList.$getScrollBarX()) * ScaledResolution+"px";
+        mobileSettingsTab.style.bottom = (ModAPI.mcinstance.$currentScreen.$height8 - ModAPI.mcinstance.$currentScreen.$keyBindingList.$bottom) * ScaledResolution+"px";
+        mobileSettingsTab.innerHTML = '<p>test</p>'.repeat(50);
+    }
+
+    if (settingsTab === true) {
+        let mobileSettingsTab = document.getElementById('mobileSettingsTab')
+        mobileSettingsTab.scrollTop = ModAPI.mcinstance.$currentScreen.$keyBindingList.$amountScrolled * ScaledResolution;
     }
 })
