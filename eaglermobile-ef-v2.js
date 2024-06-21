@@ -697,11 +697,11 @@ customStyle.textContent = `
     `;
 document.documentElement.appendChild(customStyle);
 
+window.ResponsiveScaleFactor = 1;
+
 ModAPI.addEventListener("load", () => {
     document.getElementsByClassName('exitButton')[0].style.display = "none";
     document.getElementsByClassName('secondKeyboardButton')[0].style.display = "none";
-    document.getElementsByClassName('keyboardButton')[0].style.top = "5vh";
-    document.getElementsByClassName('keyboardButton')[0].style.left = "unset";
     document.getElementsByClassName('keyboardButton')[0].addEventListener("click", (event) => {
         if (getInterfaceName() === "GuiScreenEditProfile") {
             ModAPI.mcinstance.$currentScreen.$usernameField.$isFocused = 1;
@@ -744,6 +744,10 @@ function getInterfaceName() {
     }
 }
 
+function Encodeuint8arr(myString){
+    return new TextEncoder("utf-8").encode(myString);
+}
+
 const listKeyboard = [
     "GuiScreenEditProfile",
     "GuiCreateWorld",
@@ -766,13 +770,16 @@ const listNoExit = [
 
 const inputHeight = ModAPI.mcinstance.$currentScreen.$usernameField.$height18 * 1.2;
 
+window.ScaledResolution = innerHeight/ModAPI.mcinstance.$displayHeight*ModAPI.ScaledResolution.getScaleFactor();
+
 ModAPI.addEventListener("frame", () => { //refresh all buttons size to match with the Minecraft GUI
-    let scaledInputHeight = inputHeight * ModAPI.ScaledResolution.getScaleFactor();
+    window.ScaledResolution = innerHeight/ModAPI.mcinstance.$displayHeight*ModAPI.ScaledResolution.getScaleFactor();
+    let scaledInputHeight = inputHeight * ScaledResolution;
     let buttons = document.getElementsByClassName('mobileControl');
     Array.from(buttons).forEach( (button) => {
         if (getInterfaceName() === "GuiContainerCreative" && button.classList.contains('keyboardButton')) {
-            button.style.height = ModAPI.mcinstance.$currentScreen.$searchField.$height18 * ModAPI.ScaledResolution.getScaleFactor() * 1.3 + "px";
-            button.style.width = ModAPI.mcinstance.$currentScreen.$searchField.$height18 * ModAPI.ScaledResolution.getScaleFactor() * 1.75 + "px";
+            button.style.height = ModAPI.mcinstance.$currentScreen.$searchField.$height18 * ScaledResolution * 1.3 + "px";
+            button.style.width = ModAPI.mcinstance.$currentScreen.$searchField.$height18 * ScaledResolution * 1.75 + "px";
             button.style.backgroundSize = "100% 100%";
         } else {
             button.style.height = scaledInputHeight + "px";
@@ -784,71 +791,71 @@ ModAPI.addEventListener("frame", () => { //refresh all buttons size to match wit
 ModAPI.addEventListener("frame", () => {
     if (getInterfaceName() === 'GuiScreenEditProfile') { // set button position for the profile editor GUI
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (ModAPI.mcinstance.$currentScreen.$usernameField.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (ModAPI.mcinstance.$currentScreen.$usernameField.$xPosition1 + ModAPI.mcinstance.$currentScreen.$usernameField.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (ModAPI.mcinstance.$currentScreen.$usernameField.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (ModAPI.mcinstance.$currentScreen.$usernameField.$xPosition1 + ModAPI.mcinstance.$currentScreen.$usernameField.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiCreateWorld") {
         let field = ModAPI.mcinstance.$currentScreen.$field_146335_h;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiScreenServerList") {
         let field = ModAPI.mcinstance.$currentScreen.$field_146302_g;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiScreenLANConnect") {
         let field = ModAPI.mcinstance.$currentScreen.$codeTextField0;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     } else if(getInterfaceName() === "GuiShareToLan") {
         let field = ModAPI.mcinstance.$currentScreen.$codeTextField;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiScreenAddServer") {
         let field = ModAPI.mcinstance.$currentScreen.$serverNameField;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
         let secondField = ModAPI.mcinstance.$currentScreen.$serverIPField;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
         document.getElementsByClassName('secondKeyboardButton')[0].style.display = "unset";
-        document.getElementsByClassName('secondKeyboardButton')[0].style.top = (secondField.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('secondKeyboardButton')[0].style.left = (secondField.$xPosition1 + secondField.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('secondKeyboardButton')[0].style.top = (secondField.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('secondKeyboardButton')[0].style.left = (secondField.$xPosition1 + secondField.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('secondKeyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('secondKeyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiScreenAddRelay") {
         let field = ModAPI.mcinstance.$currentScreen.$serverAddress;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
         let secondField = ModAPI.mcinstance.$currentScreen.$serverName2;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
         document.getElementsByClassName('secondKeyboardButton')[0].style.display = "unset";
-        document.getElementsByClassName('secondKeyboardButton')[0].style.top = (secondField.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('secondKeyboardButton')[0].style.left = (secondField.$xPosition1 + secondField.$width16 + 5) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('secondKeyboardButton')[0].style.top = (secondField.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('secondKeyboardButton')[0].style.left = (secondField.$xPosition1 + secondField.$width16 + 5) * ScaledResolution + "px";
         document.getElementsByClassName('secondKeyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('secondKeyboardButton')[0].style.display = "unset";
     } else if (getInterfaceName() === "GuiContainerCreative" && ModAPI.mcinstance.$currentScreen.$searchField.$visible0 === 1) {
         let field = ModAPI.mcinstance.$currentScreen.$searchField;
         document.getElementsByClassName('exitButton')[0].style.display = "none";
-        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ModAPI.ScaledResolution.getScaleFactor()+"px";
-        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 2) * ModAPI.ScaledResolution.getScaleFactor() + "px";
+        document.getElementsByClassName('keyboardButton')[0].style.top = (field.$yPosition0 - 2) * ScaledResolution+"px";
+        document.getElementsByClassName('keyboardButton')[0].style.left = (field.$xPosition1 + field.$width16 + 2) * ScaledResolution + "px";
         document.getElementsByClassName('keyboardButton')[0].style.right = "unset";
         document.getElementsByClassName('keyboardButton')[0].style.display = "unset";
     }
@@ -877,9 +884,9 @@ ModAPI.addEventListener("frame", () => {
     if (getInterfaceName() === 'GuiOptions') {
         if (ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[6].$enabled === 1) {
             if (ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[12]) { // detect if is in game settings
-                ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[8].$enabled = 0;     // Disable the "Controls" button
+                ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[8].$displayString.$characters.data = Encodeuint8arr('Mobile Controls...');
             } else {
-                ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[6].$enabled = 0;     // Disable the "Controls" button
+                ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[6].$displayString.$characters.data = Encodeuint8arr('Mobile Controls...');
             }
             
             ModAPI.mcinstance.$currentScreen.$updateScreen();                              
@@ -889,5 +896,26 @@ ModAPI.addEventListener("frame", () => {
         ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[2].$visible = 0;
     } else if (getInterfaceName() === "GuiScreenRelay") {
         ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[6].$visible = 0;
+    } else if (getInterfaceName() === "GuiControls") {
+        ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data.forEach( function (element) { 
+            if (element !== null) {
+                if (element.$id12 !== 200) {
+                    element.$visible = 0;
+                }
+            }
+        })
+        ModAPI.mcinstance.$currentScreen.$keyBindingList.$listEntries.data.forEach( function (element) { 
+            if (element.$labelText) {
+                element.$labelText.$characters.data = [];
+            } else {
+                element.$btnChangeKeyBinding.$visible = 0;
+                element.$btnReset.$visible = 0;
+                element.$keyDesc.$characters.data = [];
+            }
+        })
+
+        ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[0].$xPosition0 = (ModAPI.mcinstance.$currentScreen.$width8/2) - (ModAPI.mcinstance.$currentScreen.$buttonList.$array1.data[0].$width14/2) // center "Done" button
+        ModAPI.mcinstance.$currentScreen.$keyBindingList.$top = inputHeight;
+        ModAPI.mcinstance.$currentScreen.$screenTitle0.$characters.data = Encodeuint8arr('Mobile Controls');
     }
 })
