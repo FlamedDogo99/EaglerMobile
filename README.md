@@ -10,13 +10,14 @@
 
 Eagler Mobile brings new functionality and benefits for the EaglerCraft web client by providing mobile-friendly touch controls, keyboard access, and other settings configurable through the EaglerCraft client.
 
-So far, all devopement had been focused on the 1.8.8 client, however we hope to bring functionality to previous versions soon.
-
 <div align="center">
 
 ![Eagler Mobile Screenshot](images/preview.png)
 
 </div>
+
+> [!IMPORTANT]
+> Currently all developement is focusing on the 1.8.8 client, however functionality will be brought to previous versions soon.
 
 ## Installation
 
