@@ -78,7 +78,7 @@ Before contributing code, please read our [contributing guidelines](https://gith
 - The EaglerCraft client captures keypress through a `keydown` event listener. Because Android devices currently have an issue with `keydown` and `keyup` events, Eagler Mobile dynamically toggles between capturing `keydown` and `input` events. The state is saved in window.keyboardFix, and is toggled if a faulty keyboard event is detected.
 - To dispatch keyboard events, Eagler Mobile requires the use of the `keyEvent` function, in order to maintain functionality for `input` event listeners. For example, typing an uppercase `h` in the chat is as simple as:
   ```js
-  keyEvent("shift", "keydown"); 
+  keyEvent("shift", "keydown");
   keyEvent("h", "keydown");
   ```
 #### Mobile controls
@@ -95,4 +95,4 @@ Eagler Mobile is licensed under the terms of the [Apache License, Version 2.0](h
 ## Intended future features
 - [ ] **Gamepad support**: Mapping gamepad inputs to `keyEvent`, `wheelEvent` and `mouseEvent` functions, and implenting a controllable fake cursor for menus.
 - [ ] **File upload improvements**: Adding a cancel button and improving the styling
-- [ ] **Dynamic enable and disable of features**: Seperating gamepad controls, touch controls, pointerlock fix, and upload fix into seperate functions which can be enabled and disabled by the user 
+- [ ] **Dynamic enable and disable of features**: Seperating gamepad controls, touch controls, pointerlock fix, and upload fix into seperate functions which can be enabled and disabled by the user
