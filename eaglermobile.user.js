@@ -37,7 +37,7 @@ function isMobile() {
 if(!isMobile()) {
     alert("WARNING: This script was created for mobile, and may break functionality in non-mobile browsers!");
 }
-
+// TODO: consolidate all of these into a single object?
 clientWindow.crouchLock = false; // Used for crouch mobile control
 clientWindow.sprintLock = false; // Used for sprint mobile control
 clientWindow.keyboardFix = false; // keyboardFix ? "Standard Keyboard" : "Compatibility Mode"
@@ -98,17 +98,24 @@ Event.prototype.preventDefault = function(shouldBypass) {
 function keyEvent(name, state) {
     const charCode = name.toKeyCode();
     let evt = new KeyboardEvent(state, {
-        key: name,
-        keyCode: charCode,
-        which: charCode
+        "key": name,
+        "keyCode": charCode,
+        "which": charCode
     });
     clientWindow.dispatchEvent(evt);
 }
-function mouseEvent(number, state, canvas, clientX, clientY) {
-    canvas.dispatchEvent(new PointerEvent(state, {"button": number, "buttons": number, "clientX": clientX ?? 0, "clientY" : clientY ?? 0, "screenX": clientX ?? 0, "screenY": clientY ?? 0}))
+function mouseEvent(number, state, element, event = {"clientX": 0, "clientY" : 0, "screenX": 0, "screenY": 0}) {
+    element.dispatchEvent(new PointerEvent(state, {
+        "button": number,
+        "buttons": number,
+        "clientX": event.clientX,
+        "clientY" : event.clientY,
+        "screenX": event.screenX,
+        "screenY": event.screenY
+    }));
 }
-function wheelEvent(canvas, delta) {
-    canvas.dispatchEvent(new WheelEvent("wheel", {
+function wheelEvent(element, delta) {
+    element.dispatchEvent(new WheelEvent("wheel", {
         "wheelDeltaY": delta
   }));
 }
@@ -262,9 +269,9 @@ function insertCanvasElements() {
                     // If our touch is still set to initiaited, set it to secondary touch
                     if(clientWindow.canvasTouchMode == 1) {
                         clientWindow.canvasTouchMode = 3;
-                        mouseEvent(2, "mousedown", canvas, primaryTouch.clientX, primaryTouch.clientY)
+                        mouseEvent(2, "mousedown", canvas, primaryTouch)
                         if(clientWindow.fakelock) { // We only dispatch mouseup inGame because we want to be able to click + drag items in GUI's
-                            mouseEvent(2, "mouseup", canvas, primaryTouch.clientX, primaryTouch.clientY)
+                            mouseEvent(2, "mouseup", canvas, primaryTouch)
                         }
                     }
                 }, 300);
@@ -295,7 +302,7 @@ function insertCanvasElements() {
                     clearTimeout(clientWindow.crouchTimer);
                     clientWindow.canvasTouchMode = 2;
                     if(!clientWindow.fakelock) { // When we're inGame, we don't want to be placing blocks when we are moving the camera around
-                        mouseEvent(1, "mousedown", canvas, primaryTouch.clientX, primaryTouch.clientY);
+                        mouseEvent(1, "mousedown", canvas, primaryTouch);
                     }
                 }
             } else { // If our touch is primary, secondary, scroll or finished
@@ -323,10 +330,10 @@ function insertCanvasElements() {
                 let primaryTouch = e.changedTouches[touchIndex]
                 // When any of the controlling fingers go away, we want to wait until we aren't receiving any other touch events
                 if(clientWindow.canvasTouchMode == 2) {
-                    mouseEvent(1, "mouseup", canvas, primaryTouch.clientX, primaryTouch.clientY)
+                    mouseEvent(1, "mouseup", canvas, primaryTouch)
                 } else if (clientWindow.canvasTouchMode == 3) {
                     e.preventDefault(); // This prevents some mobile devices from dispatching a mousedown + mouseup event after a touch is ended
-                    mouseEvent(2, "mouseup", canvas, primaryTouch.clientX, primaryTouch.clientY)
+                    mouseEvent(2, "mouseup", canvas, primaryTouch)
                 }
                 clientWindow.canvasTouchMode = 5;
             }
