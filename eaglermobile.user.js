@@ -442,10 +442,13 @@ function insertCanvasElements() {
     let inventoryButton = createTouchButton("inventoryButton", "inGame");
     inventoryButton.style.cssText = "right:0vh;bottom:30vh;"
     inventoryButton.addEventListener("touchstart", function(e) {
-        keyEvent("shift", "keyup"); // Sometimes shift gets stuck on, which interferes with item manipulation in GUI's
         keyEvent("e", "keydown");
     }, false);
-    inventoryButton.addEventListener("touchend", function(e){keyEvent("e", "keyup")}, false);
+    inventoryButton.addEventListener("touchend", function(e){
+        keyEvent("shift", "keydown"); // Sometimes shift gets stuck on, which interferes with item manipulation in GUI's
+        keyEvent("shift", "keyup"); // Sometimes shift gets stuck on, which interferes with item manipulation in GUI's
+        keyEvent("e", "keyup");
+    }, false);
     document.body.appendChild(inventoryButton);
     let exitButton = createTouchButton("exitButton", "inMenu");
     exitButton.style.cssText = "top: 0vh; margin: auto; left: 0vh; right:8vh; width: 8vh; height: 8vh;"
