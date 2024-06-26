@@ -474,6 +474,9 @@ function insertCanvasElements() {
     hiddenInput.id = "hiddenInput"
     hiddenInput.classList.add("inMenu")
     hiddenInput.style.cssText = "position:absolute;top: 0vh; margin: auto; left: 8vh; right:0vh; width: 8vh; height: 8vh;font-size:20px;z-index: -10;color: transparent;text-shadow: 0 0 0 black;"; // We hide the input behind a key because display: none and opacity:0 causes issues
+    hiddenInput.setAttribute("autocorrect", "off");
+    hiddenInput.setAttribute("autocapitalize", "off");
+    hiddenInput.setAttribute("tabindex", "-1");
     hiddenInput.addEventListener("beforeinput", function(e) { // For some reason beforeinput doesn't have the same deletion problems that input has on Android
         e.stopImmediatePropagation(); // Android ignores this and the prevent default, so this will probably be removed in the future
         e.preventDefault(true); // We pass a value because we've hijacked the prevent default function to have a "should bypass" boolean value
