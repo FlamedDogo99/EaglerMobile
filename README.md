@@ -10,13 +10,14 @@
 
 Eagler Mobile brings new functionality and benefits for the EaglerCraft web client by providing mobile-friendly touch controls, keyboard access, and other settings configurable through the EaglerCraft client.
 
-So far, all devopement had been focused on the 1.8.8 client, however we hope to bring functionality to previous versions soon.
-
 <div align="center">
 
 ![Eagler Mobile Screenshot](images/preview.png)
 
 </div>
+
+> [!IMPORTANT]
+> Currently all developement is focusing on the 1.8.8 client, however functionality will be brought to previous versions soon.
 
 ## Installation
 
@@ -58,6 +59,49 @@ If you want to download the source, no building is required. The best way to dow
 ```sh
 git clone https://github.com/FlamedDogo99/EaglerMobile.git
 ```
+
+## Controls
+
+Eagler Mobile provides a variety of mobile controls and gestures to navigate the EaglerCraft client. While many controls mimic Minecraft Pocket Edition's controls, other controls have been added to interact with Minecraft Java Edition features.
+
+<details>
+<summary>See list of controls</summary>
+
+|Input / Gesture|Result|Additional Details|
+|:-:|:- |:- |
+|![Walk forward button](images/up.png)| Walk forwards | **On Press**: Shows strafe buttons |
+|![Strafe left](images/strafeLeft.png)| Strafe left | Hidden without walking forward |
+|![Strafe right](images/strafeRight.png)| Strafe right | Hidden without walking forward |
+|![Walk left button](images/left.png)| Walk left |
+|![Walk right button](images/right.png)| Walk right |
+|![Walk backwords button](images/left.png)| Walk backwords |
+|![Jump button](images/jumpButton.png)| Jump | **Double Tap**: Fly
+|![Crouch button](images/crouch.png)| Crouch | **On Hold**: Locks button |
+|![Sprint button](images/sprint.png)| Sprint | **On Hold**: Locks button |
+|![Break block button](images/attack.png)| Break block |
+|![Place block button](images/place.png)| Place block |
+|![Select block button](images/select.png)| Select block |
+|![Inventory button](images/inventory.png)| Open inventory |
+|![Drop item button](images/drop.png)| Drop item |
+|![Scroll left button](images/scrollLeft.png)| Scroll left |
+|![Scroll right button](images/scrollRight.png)| Scroll Right |
+|![Pause button](images/pauseButton.png)| Pause |
+|![Chat button](images/chat.png)| Open chat |
+|![Change perspective button](images/perspective5.png)| Change perspective |
+|![Screenshot button](images/screenshot.png)| Take screenshot |
+|![Toggle coordinates button](images/compass.png)| Toggle coordinates |
+|![Back button](images/backButton.png)| Go back |
+|![Keyboard button](images/keyboard.png)| Toggle keyboard |
+|Short touch| Primary click | **On Drag**: Mouse movement
+|Long touch| Secondary click | **On Drag**: Mouse movement
+|Two finger touch| Scroll |
+
+</details>
+
+
+> [!WARNING]
+> Because Eagler Mobile does not directly inject code into the EaglerCraft client, Eagler Mobile's touch controls only work for the standard control scheme that the EaglerCraft client is set to start with. Editing the controls in the EaglerCraft client could create unintended behavior. 
+
 ## Contributing
 
 ### Suggestions and bug reports
@@ -77,7 +121,7 @@ Before contributing code, please read our [contributing guidelines](https://gith
 - The EaglerCraft client captures keypress through a `keydown` event listener. Because Android devices currently have an issue with `keydown` and `keyup` events, Eagler Mobile dynamically toggles between capturing `keydown` and `input` events. The state is saved in window.keyboardFix, and is toggled if a faulty keyboard event is detected.
 - To dispatch keyboard events, Eagler Mobile requires the use of the `keyEvent` function, in order to maintain functionality for `input` event listeners. For example, typing an uppercase `h` in the chat is as simple as:
   ```js
-  keyEvent("shift", "keydown"); 
+  keyEvent("shift", "keydown");
   keyEvent("h", "keydown");
   ```
 #### Mobile controls
@@ -94,4 +138,4 @@ Eagler Mobile is licensed under the terms of the [Apache License, Version 2.0](h
 ## Intended future features
 - [ ] **Gamepad support**: Mapping gamepad inputs to `keyEvent`, `wheelEvent` and `mouseEvent` functions, and implenting a controllable fake cursor for menus.
 - [ ] **File upload improvements**: Adding a cancel button and improving the styling
-- [ ] **Dynamic enable and disable of features**: Seperating gamepad controls, touch controls, pointerlock fix, and upload fix into seperate functions which can be enabled and disabled by the user 
+- [ ] **Dynamic enable and disable of features**: Seperating gamepad controls, touch controls, pointerlock fix, and upload fix into seperate functions which can be enabled and disabled by the user
