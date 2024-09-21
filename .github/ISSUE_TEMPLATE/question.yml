@@ -1,0 +1,33 @@
+name: Question
+description: Ask a clarifying question about this project
+title: '[Question] '
+labels:
+  - question
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Provide a clear and concise explanation of the question.
+      placeholder: Required
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: Additional Information
+      description: >-
+        Provide a clear and concise explanation of what changes are needed on
+        the repository in order for the question's answer to be accessible to
+        future users.
+      placeholder: Required
+    validations:
+      required: true
+  - type: checkboxes
+    id: conduct
+    attributes:
+      label: Code of Conduct
+      description: ' submitting this issue, you agree to follow our [Code of Conduct](https://github.com/FlamedDogo99/EaglerMobile/blob/main/.github/CODE_OF_CONDUCT.md). '
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
