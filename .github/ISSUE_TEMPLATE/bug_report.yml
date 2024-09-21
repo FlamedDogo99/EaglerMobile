@@ -30,16 +30,3 @@ body:
       placeholder: Required
     validations:
       required: true
-  - type: checkboxes
-    id: conduct
-    attributes:
-      label: Code of Conduct
-      description: ' submitting this issue, you agree to follow our [Code of Conduct](https://github.com/FlamedDogo99/EaglerMobile/blob/main/.github/CODE_OF_CONDUCT.md). '
-      options:
-        - label: I agree to follow this project's Code of Conduct
-          required: true
-  - type: markdown
-    attributes:
-      value: >-
-        This template was generated with [Issue Forms
-        Creator](https://issue-forms-creator.netlify.app)
